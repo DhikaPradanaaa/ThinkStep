@@ -1,0 +1,389 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+// ─────────────────────────────────────────
+// AUTH & USERS
+// ─────────────────────────────────────────
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String
+  passwordHash String?
+  role         Role     @default(STUDENT)
+  gradeLevel   String?
+  schoolId     String?
+  school       School?  @relation(fields: [schoolId], references: [id])
+  avatarColor  String   @default("#3B82F6")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  sessions               LearningSession[]
+  badges                 UserBadge[]
+  examResults            ExamResult[]
+  userStats              UserStats?
+  createdQuestions       Question[]
+  teacherAssignments     Assignment[]         @relation("TeacherAssignments")
+  studentWritingSessions WritingSession[]   @relation("StudentWritingSessions")
+  tasks                  Task[]
+
+  @@index([role])
+  @@index([schoolId])
+}
+
+// ─────────────────────────────────────────
+// PERSONAL TASKS (Tugas Pribadi Siswa)
+// ─────────────────────────────────────────
+
+model Task {
+  id          String       @id @default(cuid())
+  userId      String
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  subject     String?
+  deadline    DateTime?
+  priority    TaskPriority @default(MEDIUM)
+  status      TaskStatus   @default(TODO)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@index([userId])
+  @@index([status])
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  DONE
+}
+
+enum Role {
+  STUDENT
+  TEACHER
+  PARENT
+  ADMIN
+}
+
+model School {
+  id        String   @id @default(cuid())
+  name      String
+  city      String
+  province  String
+  npsn      String?  @unique
+  users     User[]
+  exams     Exam[]
+  assignments Assignment[]
+  createdAt DateTime @default(now())
+}
+
+// ─────────────────────────────────────────
+// LEARNING SESSIONS & MESSAGES
+// ─────────────────────────────────────────
+
+model LearningSession {
+  id           String    @id @default(cuid())
+  userId       String
+  user         User      @relation(fields: [userId], references: [id])
+  questionId   String?
+  question     Question? @relation(fields: [questionId], references: [id])
+  subject      String
+  startedAt    DateTime  @default(now())
+  endedAt      DateTime?
+  isCompleted  Boolean   @default(false)
+  isCorrect    Boolean?
+  hintsUsed    Int       @default(0)
+  pointsEarned Int       @default(0)
+  
+  // Fitur Pengumpulan Jawaban
+  finalAnswerText     String?
+  finalAnswerImageUrl String?
+  aiScore             Float?
+  teacherScore        Float?
+  aiFeedback          String?
+
+  messages     Message[]
+  stats        SessionStats?
+
+  @@index([userId])
+  @@index([questionId])
+}
+
+model Message {
+  id        String      @id @default(cuid())
+  sessionId String
+  session   LearningSession @relation(fields: [sessionId], references: [id])
+  role      MessageRole
+  content   String
+  isHint    Boolean     @default(false)
+  hintTier  Int?
+  createdAt DateTime    @default(now())
+
+  @@index([sessionId])
+}
+
+enum MessageRole {
+  USER
+  ASSISTANT
+}
+
+model SessionStats {
+  id              String   @id @default(cuid())
+  sessionId       String   @unique
+  session         LearningSession @relation(fields: [sessionId], references: [id])
+  durationSeconds Int
+  thinkingTurns   Int
+  firstAttemptAt  DateTime?
+  solvedAt        DateTime?
+  autonomyScore   Float
+}
+
+// ─────────────────────────────────────────
+// QUESTIONS (Bank Soal Kurikulum Merdeka)
+// ─────────────────────────────────────────
+
+model Question {
+  id                  String       @id @default(cuid())
+  content             String
+  type                QuestionType
+  difficulty          Difficulty
+  subject             String
+  topic               String
+  subtopic            String?
+  gradeLevel          String
+  phase               String
+  capaianPembelajaran String?
+  hintTier1           String
+  hintTier2           String
+  hintTier3           String
+  correctAnswer       String?
+  explanation         String
+  tags                String       @default("[]")
+  isPublic            Boolean      @default(true)
+  createdById         String
+  createdBy           User         @relation(fields: [createdById], references: [id])
+  createdAt           DateTime     @default(now())
+  sessions            LearningSession[]
+  examQuestions       ExamQuestion[]
+
+  @@index([subject, gradeLevel])
+  @@index([topic])
+}
+
+enum QuestionType {
+  MULTIPLE_CHOICE
+  SHORT_ANSWER
+  ESSAY
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+// ─────────────────────────────────────────
+// GAMIFICATION
+// ─────────────────────────────────────────
+
+model UserBadge {
+  id       String   @id @default(cuid())
+  userId   String
+  user     User     @relation(fields: [userId], references: [id])
+  badgeId  String
+  earnedAt DateTime @default(now())
+
+  @@unique([userId, badgeId])
+  @@index([userId])
+}
+
+model UserStats {
+  id                 String   @id @default(cuid())
+  userId             String   @unique
+  user               User     @relation(fields: [userId], references: [id])
+  totalPoints        Int      @default(0)
+  totalSessions      Int      @default(0)
+  totalCorrect       Int      @default(0)
+  totalNoHintCorrect Int      @default(0)
+  currentStreak      Int      @default(0)
+  longestStreak      Int      @default(0)
+  autonomyIndex      Float    @default(0)
+  lastActiveDate     DateTime?
+  updatedAt          DateTime @updatedAt
+}
+
+// ─────────────────────────────────────────
+// EXAM MODE
+// ─────────────────────────────────────────
+
+model Exam {
+  id          String        @id @default(cuid())
+  title       String
+  schoolId    String
+  school      School        @relation(fields: [schoolId], references: [id])
+  createdById String
+  targetGrade String
+  durationMins Int
+  startsAt    DateTime?
+  endsAt      DateTime?
+  isActive    Boolean       @default(false)
+  questions   ExamQuestion[]
+  results     ExamResult[]
+  createdAt   DateTime      @default(now())
+
+  @@index([schoolId, isActive])
+}
+
+model ExamQuestion {
+  id         String   @id @default(cuid())
+  examId     String
+  exam       Exam     @relation(fields: [examId], references: [id])
+  questionId String
+  question   Question @relation(fields: [questionId], references: [id])
+  order      Int
+
+  @@unique([examId, order])
+}
+
+model ExamResult {
+  id          String   @id @default(cuid())
+  examId      String
+  exam        Exam     @relation(fields: [examId], references: [id])
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  answers     String   @default("{}")
+  score       Float?
+  tabSwitches Int      @default(0)
+  startedAt   DateTime
+  submittedAt DateTime?
+
+  @@unique([examId, userId])
+}
+
+// ─────────────────────────────────────────
+// ASSIGNMENT SYSTEM (Backend v2)
+// ─────────────────────────────────────────
+
+model Assignment {
+  id              String          @id @default(cuid())
+  title           String
+  instructions    String
+  attachmentUrls  String          @default("[]")
+  targetGrade     String
+  schoolId        String
+  school          School          @relation(fields: [schoolId], references: [id])
+  createdById     String
+  createdBy       User            @relation("TeacherAssignments", fields: [createdById], references: [id])
+  deadline        DateTime
+  maxDurationMins Int
+  minWordCount    Int?
+  allowAttachment Boolean         @default(true)
+  isPublished     Boolean         @default(false)
+  writingSessions WritingSession[]
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@index([schoolId])
+  @@index([createdById])
+  @@index([deadline])
+}
+
+// ─────────────────────────────────────────
+// WRITING SESSION (Backend v2)
+// ─────────────────────────────────────────
+
+model WritingSession {
+  id            String               @id @default(cuid())
+  assignmentId  String
+  assignment    Assignment           @relation(fields: [assignmentId], references: [id])
+  studentId     String
+  student       User                 @relation("StudentWritingSessions", fields: [studentId], references: [id])
+  status        WritingSessionStatus @default(IN_PROGRESS)
+  startedAt     DateTime             @default(now())
+  submittedAt   DateTime?
+  autoSubmitted Boolean              @default(false)
+  finalContent  String?
+  wordCount     Int?
+  events        WritingEvent[]
+  analysisReport WritingAnalysisReport?
+  pasteAttempts PasteAttempt[]
+
+  @@unique([assignmentId, studentId])
+  @@index([studentId])
+  @@index([assignmentId])
+}
+
+enum WritingSessionStatus {
+  IN_PROGRESS
+  SUBMITTED
+  TIMED_OUT
+  ABANDONED
+}
+
+model WritingEvent {
+  id               Int              @id @default(autoincrement())
+  writingSessionId String
+  writingSession   WritingSession   @relation(fields: [writingSessionId], references: [id])
+  sequenceNumber   Int
+  absoluteTimestamp BigInt
+  deltaFromPrevious Int
+  eventType        WritingEventType
+  characters       String?
+  deleteCount      Int?
+  cursorPosition   Int
+  contentLength    Int
+  contentSnapshot  String?
+
+  @@index([writingSessionId, sequenceNumber])
+}
+
+enum WritingEventType {
+  INSERT
+  DELETE_BACK
+  DELETE_FORWARD
+  SELECT
+  CURSOR_MOVE
+  PASTE_BLOCKED
+  FOCUS
+  BLUR
+}
+
+model PasteAttempt {
+  id               String         @id @default(cuid())
+  writingSessionId String
+  writingSession   WritingSession @relation(fields: [writingSessionId], references: [id])
+  attemptedAt      DateTime       @default(now())
+  source           String
+  clipboardLength  Int
+
+  @@index([writingSessionId])
+}
+
+model WritingAnalysisReport {
+  id                String         @id @default(cuid())
+  writingSessionId  String         @unique
+  writingSession    WritingSession @relation(fields: [writingSessionId], references: [id])
+  overallVerdict    String
+  confidenceScore   Float
+  flags             String         @default("[]")
+  metrics           String         @default("{}")
+  playbackFrames    String?
+  reviewedByTeacher Boolean        @default(false)
+  teacherNote       String?
+  finalDecision     String?
+  generatedAt       DateTime       @default(now())
+
+  @@index([overallVerdict])
+}

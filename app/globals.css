@@ -1,0 +1,355 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ink-50: #fafafa;
+  --color-ink-100: #f4f4f5;
+  --color-ink-200: #e4e4e7;
+  --color-ink-300: #d4d4d8;
+  --color-ink-400: #a1a1aa;
+  --color-ink-500: #71717a;
+  --color-ink-600: #52525b;
+  --color-ink-700: #3f3f46;
+  --color-ink-800: #27272a;
+  --color-ink-900: #18181b;
+
+  --color-surface: #ffffff;
+  --color-surface-alt: #fafafa;
+  --color-border: #e4e4e7;
+  --color-text-primary: #18181b;
+  --color-text-secondary: #52525b;
+  --color-text-muted: #a1a1aa;
+
+  --color-brand-main: #000000;
+  --color-brand-light: #f4f4f5;
+  --color-brand-text: #ffffff;
+
+  --color-hint-light: #fef3c7;
+  --color-hint-main: #f59e0b;
+  --color-hint-dark: #b45309;
+
+  --color-success-light: #ecfdf5;
+  --color-success-main: #10b981;
+  --color-success-dark: #047857;
+
+  --color-danger-light: #fef2f2;
+  --color-danger-main: #ef4444;
+  --color-danger-dark: #b91c1c;
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+}
+
+/* Base custom properties mapped to theme */
+:root {
+  /* Retaining some variables that are hardcoded in older classes */
+  --color-ink-50: #fafafa;
+  --color-ink-100: #f4f4f5;
+  --color-ink-200: #e4e4e7;
+  --color-ink-300: #d4d4d8;
+  --color-ink-400: #a1a1aa;
+  --color-ink-500: #71717a;
+  --color-ink-600: #52525b;
+  --color-ink-700: #3f3f46;
+  --color-ink-800: #27272a;
+  --color-ink-900: #18181b;
+
+  --color-surface: #ffffff;
+  --color-surface-alt: #fafafa;
+  --color-border: #e4e4e7;
+  --color-text-primary: #18181b;
+  --color-text-secondary: #52525b;
+  --color-text-muted: #a1a1aa;
+
+  --color-brand-main: #000000;
+  --color-brand-light: #f4f4f5;
+  --color-brand-text: #ffffff;
+
+  --color-hint-light: #fef3c7;
+  --color-hint-main: #f59e0b;
+  --color-hint-dark: #b45309;
+
+  --color-success-light: #ecfdf5;
+  --color-success-main: #10b981;
+  --color-success-dark: #047857;
+
+  --color-danger-light: #fef2f2;
+  --color-danger-main: #ef4444;
+  --color-danger-dark: #b91c1c;
+
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.05), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+  --shadow-glass: 0 8px 32px 0 rgb(0 0 0 / 0.04);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-surface text-text-primary antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+  }
+}
+
+@layer utilities {
+
+  /* Typography Scale */
+  .text-display-lg {
+    @apply text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-tight;
+    font-family: var(--font-display);
+  }
+
+  .text-display-md {
+    @apply text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight leading-tight;
+    font-family: var(--font-display);
+  }
+
+  .text-display-sm {
+    @apply text-2xl sm:text-3xl lg:text-4xl font-semibold tracking-tight leading-snug;
+    font-family: var(--font-display);
+  }
+
+  .text-heading-lg {
+    @apply text-xl sm:text-2xl font-semibold leading-snug;
+    font-family: var(--font-display);
+  }
+
+  .text-heading-md {
+    @apply text-lg sm:text-xl font-semibold leading-snug;
+    font-family: var(--font-display);
+  }
+
+  .text-heading-sm {
+    @apply text-base sm:text-lg font-semibold leading-normal;
+    font-family: var(--font-display);
+  }
+
+  .text-body-lg {
+    @apply text-lg leading-relaxed;
+  }
+
+  .text-body-md {
+    @apply text-base leading-relaxed;
+  }
+
+  .text-body-sm {
+    @apply text-sm leading-relaxed;
+  }
+}
+
+@layer components {
+
+  /* Modern Premium Buttons */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 bg-brand-main text-brand-text px-5 py-2.5 rounded-lg font-medium text-sm border border-brand-main shadow-sm transition-all duration-200;
+  }
+
+  .btn-primary:hover {
+    @apply bg-ink-800 border-ink-800 shadow-md translate-y-[-1px];
+  }
+
+  .btn-primary:active {
+    @apply translate-y-[0px] scale-[0.98];
+  }
+
+  .btn-primary:disabled {
+    @apply opacity-50 cursor-not-allowed transform-none shadow-sm;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 bg-surface text-text-primary px-5 py-2.5 rounded-lg font-medium text-sm border border-border shadow-sm transition-all duration-200;
+  }
+
+  .btn-secondary:hover {
+    @apply bg-surface-alt border-ink-300;
+  }
+
+  .btn-secondary:active {
+    @apply scale-[0.98];
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 bg-transparent text-text-secondary px-4 py-2 rounded-lg font-medium text-sm transition-colors duration-200;
+  }
+
+  .btn-ghost:hover {
+    @apply bg-surface-alt text-text-primary;
+  }
+
+  /* Inputs */
+  .input-base {
+    @apply w-full px-4 py-2.5 border border-border rounded-lg bg-surface text-sm text-text-primary transition-all duration-200 outline-none;
+  }
+
+  .input-base:focus {
+    @apply border-brand-main ring-4 ring-brand-main/10;
+  }
+
+  .input-base::placeholder {
+    @apply text-text-muted;
+  }
+
+  /* Cards */
+  .card {
+    @apply bg-surface border border-border rounded-2xl p-6 shadow-sm transition-all duration-200;
+  }
+
+  .card-hover:hover {
+    @apply -translate-y-1 shadow-md border-ink-300;
+  }
+
+  /* Glass Panel */
+  .glass-panel {
+    @apply bg-white/80 backdrop-blur-xl border border-white/20 shadow-[var(--shadow-glass)];
+  }
+
+  /* Badges */
+  .badge {
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold;
+  }
+
+  /* Status Badges */
+  .status-badge {
+    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold;
+  }
+
+  .status-online {
+    @apply bg-success-light text-success-dark border border-success-main/20;
+  }
+
+  .status-offline {
+    @apply bg-hint-light text-hint-dark border border-hint-main/20;
+  }
+
+  .status-dot {
+    @apply w-2 h-2 rounded-full;
+  }
+
+  .status-dot.online {
+    @apply bg-success-main ring-2 ring-success-light;
+  }
+
+  .status-dot.offline {
+    @apply bg-hint-main ring-2 ring-hint-light;
+  }
+
+  /* Chat Bubbles */
+  .chat-bubble {
+    @apply max-w-[85%] p-4 rounded-2xl text-[0.95rem] leading-relaxed relative shadow-sm;
+  }
+
+  .chat-bubble.user {
+    @apply bg-surface-alt text-text-primary border border-border rounded-br-sm;
+  }
+
+  .chat-bubble.ai {
+    @apply bg-surface text-text-primary border border-border rounded-bl-sm;
+  }
+
+  .chat-bubble.hint {
+    @apply bg-hint-light border border-hint-main/30 text-hint-dark rounded-br-sm;
+  }
+
+  /* Markdown in chat */
+  .prose {
+    @apply text-current;
+  }
+
+  .prose p {
+    @apply mb-3 last:mb-0;
+  }
+
+  .prose strong {
+    @apply font-semibold;
+  }
+
+  .prose ul,
+  .prose ol {
+    @apply ml-6 mb-3 list-disc;
+  }
+
+  .prose li {
+    @apply mb-1;
+  }
+
+  .prose code {
+    @apply bg-black/5 px-1.5 py-0.5 rounded font-mono text-[0.85em];
+  }
+
+  .prose pre {
+    @apply bg-ink-900 text-ink-50 p-4 rounded-lg overflow-x-auto my-4 font-mono text-[0.85em];
+  }
+}
+
+/* Animations */
+@keyframes slideUpFade {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.slide-up {
+  animation: slideUpFade 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Loading Dots */
+.typing-dots {
+  @apply flex gap-1 items-center h-6;
+}
+
+.typing-dots span {
+  @apply w-1.5 h-1.5 bg-text-muted rounded-full animate-bounce;
+}
+
+.typing-dots span:nth-child(1) {
+  animation-delay: -0.32s;
+}
+
+.typing-dots span:nth-child(2) {
+  animation-delay: -0.16s;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  @apply w-2 h-2;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-ink-200 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-ink-300;
+}
