@@ -53,25 +53,37 @@ Kami membawa ekosistem belajar yang komprehensif, tidak hanya untuk siswa, tapi 
 
 Berikut adalah dokumentasi tampilan dari dalam aplikasi ThinkStep:
 
-**1. Dashboard Siswa (Beranda)**
+**1. Halaman Utama (Landing Page) — Hero Section**
+Tampilan perkenalan metode Socratic AI kepada pengguna publik.
+<img src="./public/docs/landing-hero.png" width="800" alt="Landing Page Hero" />
+
+**2. Halaman Utama (Landing Page) — Fitur Unggulan**
+Penjelasan tentang bimbingan Lumina AI, pemantauan guru, dan laporan untuk orang tua.
+<img src="./public/docs/landing-features.png" width="800" alt="Landing Page Features" />
+
+**3. Halaman Utama (Landing Page) — Profil Pembuat & Kontak**
+Biodata pembuat aplikasi dan formulir ulasan kontak.
+<img src="./public/docs/landing-profile.png" width="800" alt="Landing Page Profile" />
+
+**4. Dashboard Siswa (Beranda)**
 Menampilkan statistik belajar, poin, indeks kemandirian, dan streak belajar harian.
-<img src="./thinkstep-app/public/docs/dashboard.png" width="800" alt="Dashboard Siswa" />
+<img src="./public/docs/dashboard.png" width="800" alt="Dashboard Siswa" />
 
-**2. Tanya Lumina (Chat AI Tutor)**
+**5. Tanya Lumina (Chat AI Tutor)**
 Lumina AI menggunakan *Socratic Method* untuk membimbing siswa menjawab pertanyaan tanpa memberikan jawaban langsung.
-<img src="./thinkstep-app/public/docs/tanya-lumina.png" width="800" alt="Tanya Lumina AI" />
+<img src="./public/docs/tanya-lumina.png" width="800" alt="Tanya Lumina AI" />
 
-**3. Latihan Soal AI**
+**6. Latihan Soal AI**
 Latihan soal pilihan ganda dari berbagai mata pelajaran (Matematika, IPA, IPS, B. Inggris).
-<img src="./thinkstep-app/public/docs/latihan.png" width="800" alt="Latihan Soal" />
+<img src="./public/docs/latihan.png" width="800" alt="Latihan Soal" />
 
-**4. Manajemen Tugas Pribadi**
+**7. Manajemen Tugas Pribadi**
 Siswa dapat mencatat dan memonitor *progress* tugas-tugas personal mereka di luar tugas sekolah.
-<img src="./thinkstep-app/public/docs/tugas-pribadi.png" width="800" alt="Tugas Pribadi" />
+<img src="./public/docs/tugas-pribadi.png" width="800" alt="Tugas Pribadi" />
 
-**5. Tugas Sekolah**
+**8. Tugas Sekolah**
 Integrasi tugas resmi yang diberikan oleh guru pengajar langsung di dalam platform.
-<img src="./thinkstep-app/public/docs/tugas-sekolah.png" width="800" alt="Tugas Sekolah" />
+<img src="./public/docs/tugas-sekolah.png" width="800" alt="Tugas Sekolah" />
 
 ---
 
