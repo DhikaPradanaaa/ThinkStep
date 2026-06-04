@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { signOut } from 'next-auth/react'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { syncOfflineMessages } from '@/lib/offline/message-queue'
 import { 
   Home, BookOpen, PenSquare, Award, 
@@ -12,6 +12,7 @@ import {
 } from 'lucide-react'
 import NotificationBell from './NotificationBell'
 import { ThemeToggle } from '../ui/ThemeToggle'
+import Image from 'next/image'
 
 interface NavItem {
   href: string
@@ -61,20 +62,90 @@ export default function AppLayout({ children, role, userName = 'Pengguna', avata
   
   const [isOnline, setIsOnline] = useState(true)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const isOnlineRef = useRef(true)
+  // Only mark offline after 2 consecutive failures — prevents false negatives
+  const failCountRef = useRef(0)
 
   useEffect(() => {
+    // Start with browser's native signal as baseline
+    isOnlineRef.current = navigator.onLine
     setIsOnline(navigator.onLine)
-    
-    const handleOnline = () => {
-      setIsOnline(true)
-      syncOfflineMessages()
+
+    // Multiple endpoints to try — if ANY succeeds we're online.
+    // Order: fastest/most-accessible first for Indonesian networks.
+    const PING_ENDPOINTS = [
+      'https://www.google.com/generate_204',          // returns 204, very fast
+      'https://connectivitycheck.gstatic.com/generate_204', // Google connectivity
+      'https://captive.apple.com/hotspot-detect.html', // Apple's check
+    ]
+
+    const pingEndpoint = async (url: string): Promise<boolean> => {
+      try {
+        const res = await fetch(url, {
+          method: 'HEAD',
+          mode: 'no-cors',   // no-cors avoids CORS blocks; we just need it to resolve
+          cache: 'no-store',
+          signal: AbortSignal.timeout(5000),
+        })
+        // With no-cors, status is 0 (opaque) but fetch resolving means we're online
+        return res.type === 'opaque' || res.ok
+      } catch {
+        return false
+      }
     }
-    const handleOffline = () => setIsOnline(false)
-    
+
+    const checkTrueConnectivity = async () => {
+      // If browser itself says offline, trust it immediately
+      if (!navigator.onLine) {
+        failCountRef.current = 3
+        isOnlineRef.current = false
+        setIsOnline(false)
+        return
+      }
+
+      // Try each endpoint — succeed fast, fail slow
+      let reachable = false
+      for (const url of PING_ENDPOINTS) {
+        reachable = await pingEndpoint(url)
+        if (reachable) break
+      }
+
+      if (reachable) {
+        if (!isOnlineRef.current) {
+          syncOfflineMessages()
+        }
+        failCountRef.current = 0
+        isOnlineRef.current = true
+        setIsOnline(true)
+      } else {
+        // Increment failure counter — only go offline after 2 consecutive failures
+        failCountRef.current += 1
+        if (failCountRef.current >= 2) {
+          isOnlineRef.current = false
+          setIsOnline(false)
+        }
+      }
+    }
+
+    // Check after a short delay on mount (let page fully load first)
+    const mountTimer = setTimeout(() => checkTrueConnectivity(), 2000)
+    const intervalId = setInterval(checkTrueConnectivity, 20000)
+
+    const handleOnline = () => {
+      failCountRef.current = 0
+      checkTrueConnectivity()
+    }
+    const handleOffline = () => {
+      isOnlineRef.current = false
+      setIsOnline(false)
+    }
+
     window.addEventListener('online', handleOnline)
     window.addEventListener('offline', handleOffline)
-    
+
     return () => {
+      clearTimeout(mountTimer)
+      clearInterval(intervalId)
       window.removeEventListener('online', handleOnline)
       window.removeEventListener('offline', handleOffline)
     }
@@ -96,8 +167,9 @@ export default function AppLayout({ children, role, userName = 'Pengguna', avata
         {/* Logo Area */}
         <div className="flex items-center justify-between p-6">
           <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity" onClick={() => setIsMobileMenuOpen(false)}>
-            <div className="w-10 h-10 rounded-xl bg-brand-main text-brand-text flex items-center justify-center shadow-md">
-              <Brain size={24} strokeWidth={2.5} />
+            <div className="w-10 h-10 rounded-xl bg-white dark:bg-ink-900 flex items-center justify-center shadow-md overflow-hidden relative">
+              <Image src="/logo-light.png" alt="ThinkStep Logo" fill className="object-cover dark:hidden" />
+              <Image src="/logo-dark.png" alt="ThinkStep Logo" fill className="object-cover hidden dark:block" />
             </div>
             <span className="font-bold text-xl tracking-tight text-text-primary font-display">
               ThinkStep

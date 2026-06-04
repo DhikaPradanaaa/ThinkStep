@@ -5,9 +5,17 @@ import nodemailer from 'nodemailer'
 
 export async function GET(request: Request) {
   const authHeader = request.headers.get('authorization')
-  // In production, verify authHeader matches CRON_SECRET from env
-  if (process.env.CRON_SECRET && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-    console.warn("CRON_SECRET mismatch, but allowing for local testing");
+  const cronSecret = process.env.CRON_SECRET
+
+  // SECURITY: Strictly enforce CRON_SECRET — do not allow fallback to dev mode in production
+  if (!cronSecret) {
+    console.error('[CRON] CRON_SECRET env variable is not set. Aborting for safety.')
+    return NextResponse.json({ error: 'Server misconfiguration' }, { status: 500 })
+  }
+
+  if (authHeader !== `Bearer ${cronSecret}`) {
+    console.warn('[CRON] Unauthorized weekly-report access attempt blocked.')
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
   try {

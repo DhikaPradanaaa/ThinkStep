@@ -5,6 +5,7 @@ import { SendHorizonal, BrainCircuit, CheckCircle2, ChevronDown, ChevronUp, Mess
 import { useRouter } from 'next/navigation';
 import MessageBubble from './MessageBubble';
 import HintButton from './HintButton';
+import { compressImage } from '@/lib/utils/image';
 
 interface Message {
   id: string;
@@ -56,6 +57,21 @@ export default function ChatInterface({
   const [finalAnswerFile, setFinalAnswerFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      try {
+        const compressed = await compressImage(file, 1200, 0.8);
+        setFinalAnswerFile(compressed);
+      } catch (err) {
+        console.error('Failed to compress image:', err);
+        setFinalAnswerFile(file); // fallback to original if error
+      }
+    } else {
+      setFinalAnswerFile(null);
+    }
+  };
+
   const router = useRouter();
 
   const endOfMessagesRef = useRef<HTMLDivElement>(null);
@@ -396,7 +412,7 @@ export default function ChatInterface({
                   <input 
                     type="file" 
                     accept="image/*" 
-                    onChange={(e) => setFinalAnswerFile(e.target.files?.[0] || null)}
+                    onChange={handleFileChange}
                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                   />
                   <div className="w-12 h-12 rounded-full bg-surface border border-border flex items-center justify-center mb-3 shadow-sm group-hover:scale-105 transition-transform">

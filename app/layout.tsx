@@ -28,7 +28,7 @@ export default function RootLayout({
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
       </head>
-      <body className="font-sans antialiased bg-surface text-text-primary">
+      <body className="font-sans antialiased bg-surface text-text-primary" suppressHydrationWarning>
         <Providers>{children}</Providers>
       </body>
     </html>

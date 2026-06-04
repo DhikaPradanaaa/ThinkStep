@@ -4,6 +4,7 @@ const OLLAMA_MODEL = process.env.OLLAMA_MODEL || 'qwen2.5:7b';
 export interface OllamaMessage {
   role: 'system' | 'user' | 'assistant';
   content: string;
+  images?: string[];
 }
 
 export interface OllamaStreamChunk {

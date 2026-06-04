@@ -3,8 +3,9 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import {
-  Brain, ArrowRight, AlertCircle, Loader2, CheckCircle2,
+  ArrowRight, AlertCircle, Loader2, CheckCircle2,
   Eye, EyeOff, GraduationCap, Presentation, Users,
 } from 'lucide-react'
 
@@ -146,9 +147,10 @@ export default function RegisterPage() {
       <div className="w-full max-w-lg scale-in relative z-10">
         {/* Logo */}
         <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-3 justify-center mb-3 group hover:opacity-90 transition-opacity">
-            <div className="w-12 h-12 rounded-2xl bg-brand-main text-brand-text flex items-center justify-center shadow-xl shadow-ink-900/20 group-hover:scale-105 transition-transform duration-300">
-              <Brain size={28} strokeWidth={2.5} />
+          <Link href="/" className="inline-flex flex-col items-center gap-3 justify-center mb-3 group hover:opacity-90 transition-opacity">
+            <div className="w-14 h-14 rounded-2xl bg-white dark:bg-ink-900 shadow-md flex items-center justify-center mb-2 overflow-hidden relative">
+              <Image src="/logo-light.png" alt="ThinkStep Logo" fill className="object-cover dark:hidden" />
+              <Image src="/logo-dark.png" alt="ThinkStep Logo" fill className="object-cover hidden dark:block" />
             </div>
             <span className="font-bold text-2xl text-text-primary tracking-tight font-display">
               ThinkStep

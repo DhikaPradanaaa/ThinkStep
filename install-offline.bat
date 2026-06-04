@@ -59,10 +59,13 @@ echo ===================================================
 echo 1. Qwen 2.5 (7B) - Sangat cerdas berbahasa Indonesia (Rekomendasi, ~4.7 GB)
 echo 2. Llama 3.1 (8B)- Standar industri, performa penalaran sangat kuat (~4.7 GB)
 echo 3. Phi-3 Mini    - Sangat ringan, cocok untuk laptop spek rendah (~2.3 GB)
+echo 4. LLaVA (Vision)- Mendukung analisa foto/gambar secara offline (~4.7 GB)
 echo ===================================================
-choice /c 123 /m "Pilih Model AI yang ingin diunduh (1/2/3): "
+choice /c 1234 /m "Pilih Model AI yang ingin diunduh (1/2/3/4): "
 
-if errorlevel 3 (
+if errorlevel 4 (
+    set AI_MODEL=llava
+) else if errorlevel 3 (
     set AI_MODEL=phi3:mini
 ) else if errorlevel 2 (
     set AI_MODEL=llama3.1

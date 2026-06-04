@@ -6,6 +6,7 @@ import { join } from 'path';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { calculatePoints, calculateAutonomyIndex } from '@/lib/gamification/scoring';
 import { checkEarnedBadges } from '@/lib/gamification/badges';
+import { generateOllamaCompletion, checkOllamaAvailability, OllamaMessage } from '@/lib/ai/ollama-client';
 
 export async function POST(req: Request) {
   try {
@@ -37,20 +38,46 @@ export async function POST(req: Request) {
     let base64Data = null;
 
     if (file) {
+      // SECURITY: Enforce max file size (5MB)
+      const MAX_SIZE_BYTES = 5 * 1024 * 1024;
+      if (file.size > MAX_SIZE_BYTES) {
+        return new NextResponse('File too large. Maximum size is 5MB.', { status: 413 });
+      }
+
+      // SECURITY: Whitelist allowed MIME types — reject everything else at server level
+      const ALLOWED_MIME_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/gif']);
+      const clientMime = file.type?.toLowerCase() || '';
+      if (!ALLOWED_MIME_TYPES.has(clientMime)) {
+        return new NextResponse('Invalid file type. Only JPEG, PNG, WEBP, and GIF are allowed.', { status: 415 });
+      }
+
       const bytes = await file.arrayBuffer();
       const buffer = Buffer.from(bytes);
+
+      // SECURITY: Verify actual file signature (magic bytes) — not just the declared MIME
+      const magicBytes = buffer.slice(0, 4);
+      const isJpeg = magicBytes[0] === 0xFF && magicBytes[1] === 0xD8;
+      const isPng = magicBytes[0] === 0x89 && magicBytes[1] === 0x50;
+      const isWebp = buffer.slice(0, 12).toString('ascii').includes('WEBP');
+      const isGif = magicBytes[0] === 0x47 && magicBytes[1] === 0x49;
+      if (!isJpeg && !isPng && !isWebp && !isGif) {
+        return new NextResponse('File content does not match declared type.', { status: 415 });
+      }
 
       const uploadDir = join(process.cwd(), 'public', 'uploads');
       await mkdir(uploadDir, { recursive: true });
 
-      const originalName = file.name || 'image.jpg';
-      const safeName = originalName.replace(/[^a-zA-Z0-9.\-_]/g, '');
-      const filename = `${Date.now()}-${safeName}`;
+      // SECURITY: Strip all characters except alphanumeric, dash, underscore
+      // Prefix with timestamp + random to prevent name collisions and enumeration
+      const originalName = file.name || 'image';
+      const nameWithoutExt = originalName.replace(/\.[^.]+$/, '').replace(/[^a-zA-Z0-9\-_]/g, '').slice(0, 40);
+      const ext = clientMime === 'image/jpeg' ? '.jpg' : clientMime === 'image/png' ? '.png' : clientMime === 'image/webp' ? '.webp' : '.gif';
+      const filename = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}-${nameWithoutExt}${ext}`;
 
       await writeFile(join(uploadDir, filename), buffer);
       fileUrl = `/uploads/${filename}`;
 
-      mimeType = file.type || 'image/jpeg';
+      mimeType = clientMime;
       base64Data = buffer.toString('base64');
     }
 
@@ -101,10 +128,54 @@ Kembalikan format JSON murni TANPA markdown block, dengan struktur persis sepert
       }
       isCorrect = score >= 70;
     } catch (aiError: any) {
-      console.warn('Gemini API failed during submission:', aiError.message);
-      feedback = 'Maaf, AI saat ini sedang sibuk. Jawabanmu telah disimpan dan diteruskan ke Guru untuk dinilai secara manual.';
-      score = 0;
-      isCorrect = false;
+      console.warn('Gemini API failed during submission, falling back to Ollama:', aiError.message);
+      
+      const isOllamaOnline = await checkOllamaAvailability();
+      if (isOllamaOnline) {
+        try {
+          const ollamaModelName = process.env.OLLAMA_MODEL || 'qwen2.5:7b';
+          const isVisionModel = ollamaModelName.toLowerCase().includes('llava') || ollamaModelName.toLowerCase().includes('vision') || ollamaModelName.toLowerCase().includes('moondream');
+          
+          let offlinePrompt = prompt;
+          if (file && base64Data && !isVisionModel) {
+             offlinePrompt += '\n\n[SISTEM]: Siswa melampirkan sebuah gambar, namun karena Anda adalah model teks, Anda tidak dapat melihat gambar tersebut. Berikan penilaian HANYA berdasarkan penjelasan teks yang diberikan siswa di atas.';
+          }
+
+          const ollamaMsg: OllamaMessage = {
+            role: 'user',
+            content: offlinePrompt,
+          };
+
+          if (file && base64Data && isVisionModel) {
+            ollamaMsg.images = [base64Data];
+          }
+
+          const responseText = await generateOllamaCompletion([
+            { role: 'system', content: 'Anda adalah guru penilai. Anda harus SELALU mengembalikan respons dalam format JSON murni.' },
+            ollamaMsg
+          ]);
+
+          try {
+            const jsonStr = responseText.replace(/```json/g, '').replace(/```/g, '').trim();
+            const parsed = JSON.parse(jsonStr);
+            score = typeof parsed.score === 'number' ? parsed.score : 0;
+            feedback = parsed.feedback || feedback;
+          } catch (e) {
+            console.error('Failed to parse Ollama response', responseText);
+            feedback = responseText;
+          }
+          isCorrect = score >= 70;
+        } catch (ollamaError: any) {
+          console.error('Ollama fallback failed:', ollamaError.message);
+          feedback = 'Maaf, AI saat ini sedang sibuk dan mode offline gagal memproses. Jawabanmu diteruskan ke Guru.';
+          score = 0;
+          isCorrect = false;
+        }
+      } else {
+        feedback = 'Maaf, sistem sedang offline dan AI lokal tidak aktif. Jawabanmu telah disimpan dan diteruskan ke Guru untuk dinilai.';
+        score = 0;
+        isCorrect = false;
+      }
     }
 
     // ─── Hitung Poin ───────────────────────────────────────────
@@ -263,7 +334,8 @@ Kembalikan format JSON murni TANPA markdown block, dengan struktur persis sepert
 
     return NextResponse.json({ success: true, score, feedback, pointsEarned, newBadges });
   } catch (error: any) {
+    // SECURITY: Never expose internal error details to the client
     console.error('Submit API Error:', error);
-    return new NextResponse(`Internal Error: ${error?.message || 'Unknown'}`, { status: 500 });
+    return new NextResponse('Internal Server Error', { status: 500 });
   }
 }

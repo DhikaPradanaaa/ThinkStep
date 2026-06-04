@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react'
 import { signIn } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { Brain, GraduationCap, Presentation, ArrowRight, AlertCircle, Loader2, CheckCircle2, UserPlus } from 'lucide-react'
+import Image from 'next/image'
+import { GraduationCap, Presentation, ArrowRight, AlertCircle, Loader2, CheckCircle2, UserPlus } from 'lucide-react'
 import { Suspense } from 'react'
 
 function LoginForm() {
@@ -74,15 +75,14 @@ function LoginForm() {
       <div className="w-full max-w-md scale-in relative z-10">
         {/* Logo */}
         <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-3 justify-center mb-3 group hover:opacity-90 transition-opacity">
-            <div className="w-12 h-12 rounded-2xl bg-brand-main text-brand-text flex items-center justify-center shadow-xl shadow-ink-900/20 group-hover:scale-105 transition-transform duration-300">
-              <Brain size={28} strokeWidth={2.5} />
+          <div className="flex flex-col items-center justify-center text-center space-y-3 slide-up">
+            <div className="w-14 h-14 rounded-2xl bg-white dark:bg-ink-900 shadow-md flex items-center justify-center mb-2 overflow-hidden relative">
+              <Image src="/logo-light.png" alt="ThinkStep Logo" fill className="object-cover dark:hidden" />
+              <Image src="/logo-dark.png" alt="ThinkStep Logo" fill className="object-cover hidden dark:block" />
             </div>
-            <span className="font-bold text-2xl text-text-primary tracking-tight font-display">
-              ThinkStep
-            </span>
-          </Link>
-          <p className="text-text-secondary text-sm font-medium">
+            <h1 className="text-display-sm font-bold text-text-primary">Selamat Datang Kembali</h1>
+          </div>
+          <p className="text-text-secondary text-sm font-medium mt-3">
             Masuk untuk mulai belajar bersama Lumina AI
           </p>
         </div>

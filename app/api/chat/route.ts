@@ -125,8 +125,9 @@ export async function POST(req: Request) {
             isOnline = false
           }
 
-          const hasGemini = !!process.env.GEMINI_API_KEY
-          console.log(`[AI Router] isOnline=${isOnline}, hasGemini=${hasGemini}, key_prefix=${process.env.GEMINI_API_KEY?.slice(0, 8) ?? 'NONE'}`)
+          // SECURITY: Do NOT log any portion of the API key
+          console.log(`[AI Router] isOnline=${isOnline}, hasGemini=${hasGemini}`)
+
 
           let fullResponse = ''
           let isDirectAnswerFound = false

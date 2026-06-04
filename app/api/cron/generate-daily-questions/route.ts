@@ -29,10 +29,18 @@ async function getSystemUserId(): Promise<string | null> {
 }
 
 export async function GET(request: Request) {
-  // Verifikasi CRON_SECRET jika di production
+  // SECURITY: Strictly enforce CRON_SECRET on every invocation
   const authHeader = request.headers.get('authorization');
-  if (process.env.CRON_SECRET && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-    console.warn('[CRON] Secret mismatch — allowed in dev mode');
+  const cronSecret = process.env.CRON_SECRET;
+
+  if (!cronSecret) {
+    console.error('[CRON] CRON_SECRET env variable is not set. Aborting for safety.');
+    return NextResponse.json({ error: 'Server misconfiguration' }, { status: 500 });
+  }
+
+  if (authHeader !== `Bearer ${cronSecret}`) {
+    console.warn('[CRON] Unauthorized access attempt blocked.');
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   const today = getTodayString();
