@@ -122,15 +122,15 @@ function TaskModal({
         className="absolute inset-0 bg-black/40 backdrop-blur-sm"
         onClick={onClose}
       />
-      <div className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-border scale-in overflow-hidden">
+      <div className="relative w-full max-w-lg bg-surface rounded-3xl shadow-2xl border border-border scale-in overflow-hidden">
         {/* Header Modal */}
         <div className="flex items-center justify-between px-6 py-5 border-b border-border bg-surface-alt/50">
-          <h2 className="text-heading-sm text-ink-900">
+          <h2 className="text-heading-sm text-text-primary">
             {initial ? '✏️ Edit Tugas' : '➕ Tambah Tugas Baru'}
           </h2>
           <button
             onClick={onClose}
-            className="w-8 h-8 flex items-center justify-center rounded-lg text-text-muted hover:bg-ink-100 hover:text-ink-900 transition-colors"
+            className="w-8 h-8 flex items-center justify-center rounded-lg text-text-muted hover:bg-ink-100 hover:text-text-primary transition-colors"
           >
             <X size={18} />
           </button>
@@ -278,7 +278,7 @@ function TaskCard({
 
   return (
     <div
-      className={`group relative bg-white rounded-2xl border transition-all duration-200 shadow-sm hover:shadow-md hover:-translate-y-0.5 ${
+      className={`group relative bg-surface rounded-2xl border transition-all duration-200 shadow-sm hover:shadow-md hover:-translate-y-0.5 ${
         task.status === 'DONE'
           ? 'border-emerald-200 bg-emerald-50/30 opacity-75'
           : isOverdue
@@ -314,7 +314,7 @@ function TaskCard({
               className={`text-sm font-semibold leading-snug mb-1 ${
                 task.status === 'DONE'
                   ? 'line-through text-text-muted'
-                  : 'text-ink-900'
+                  : 'text-text-primary'
               }`}
             >
               {task.title}
@@ -574,7 +574,7 @@ function TasksContent() {
         {/* Header */}
         <div className="flex items-center justify-between gap-4 fade-in">
           <div>
-            <h1 className="text-display-sm text-ink-900 mb-1">Tugas Pribadi 📋</h1>
+            <h1 className="text-display-sm text-text-primary mb-1">Tugas Pribadi 📋</h1>
             <p className="text-body-sm text-text-secondary">
               Kelola dan pantau progress tugas belajarmu
             </p>
@@ -597,12 +597,12 @@ function TasksContent() {
             { label: 'Selesai', value: stats.done, icon: CheckCircle2, color: 'text-emerald-600', bg: 'bg-emerald-100' },
             { label: 'Terlambat', value: stats.overdue, icon: AlertCircle, color: 'text-red-600', bg: 'bg-red-100' },
           ].map(({ label, value, icon: Icon, color, bg }) => (
-            <div key={label} className="bg-white rounded-2xl border border-border p-4 shadow-sm flex items-center gap-3">
+            <div key={label} className="bg-surface rounded-2xl border border-border p-4 shadow-sm flex items-center gap-3">
               <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${bg} shrink-0`}>
                 <Icon size={18} className={color} />
               </div>
               <div>
-                <p className="text-2xl font-bold text-ink-900 leading-none">{value}</p>
+                <p className="text-2xl font-bold text-text-primary leading-none">{value}</p>
                 <p className="text-xs text-text-muted font-medium mt-0.5">{label}</p>
               </div>
             </div>
@@ -623,8 +623,8 @@ function TasksContent() {
               onClick={() => setFilterStatus(value as any)}
               className={`px-4 py-2 rounded-xl text-sm font-semibold whitespace-nowrap transition-all duration-200 ${
                 filterStatus === value
-                  ? 'bg-ink-900 text-white shadow-md'
-                  : 'bg-white border border-border text-text-secondary hover:border-ink-400 hover:text-ink-900'
+                  ? 'bg-brand-main text-brand-text shadow-md'
+                  : 'bg-surface border border-border text-text-secondary hover:border-ink-400 hover:text-text-primary'
               }`}
             >
               {label}
@@ -638,7 +638,7 @@ function TasksContent() {
             <div className="w-20 h-20 rounded-3xl bg-ink-100 flex items-center justify-center mx-auto mb-5 text-4xl shadow-inner">
               {filterStatus === 'DONE' ? '🏆' : filterStatus === 'IN_PROGRESS' ? '⚡' : '📋'}
             </div>
-            <h3 className="text-heading-sm text-ink-900 mb-2">
+            <h3 className="text-heading-sm text-text-primary mb-2">
               {filterStatus === 'ALL'
                 ? 'Belum ada tugas'
                 : filterStatus === 'DONE'

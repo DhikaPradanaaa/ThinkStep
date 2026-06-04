@@ -8,8 +8,10 @@ import { syncOfflineMessages } from '@/lib/offline/message-queue'
 import { 
   Home, BookOpen, PenSquare, Award, 
   LayoutDashboard, Users, Library, ClipboardList, FileText,
-  LogOut, Menu, X, Brain, Wifi, WifiOff, ListTodo, Presentation, MessageCircle
+  LogOut, Menu, X, Brain, Wifi, WifiOff, ListTodo, Presentation, MessageCircle, Trophy, BarChart2, CalendarDays
 } from 'lucide-react'
+import NotificationBell from './NotificationBell'
+import { ThemeToggle } from '../ui/ThemeToggle'
 
 interface NavItem {
   href: string
@@ -21,14 +23,18 @@ const studentNav: NavItem[] = [
   { href: '/student/dashboard', label: 'Beranda', icon: Home },
   { href: '/student/study', label: 'Belajar', icon: BookOpen },
   { href: '/student/chat', label: 'Tanya Lumina', icon: MessageCircle },
+  { href: '/student/calendar', label: 'Kalender', icon: CalendarDays },
   { href: '/student/tasks', label: 'Tugas Pribadi', icon: ListTodo },
   { href: '/student/assignments', label: 'Tugas Sekolah', icon: PenSquare },
+  { href: '/student/leaderboard', label: 'Peringkat', icon: Trophy },
   { href: '/student/profile', label: 'Profil', icon: Award },
 ]
 
 
 const teacherNav: NavItem[] = [
   { href: '/teacher/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/teacher/analytics', label: 'Analitik', icon: BarChart2 },
+  { href: '/teacher/calendar', label: 'Kalender', icon: CalendarDays },
   { href: '/teacher/classes', label: 'Kelas', icon: Presentation },
   { href: '/teacher/students', label: 'Siswa', icon: Users },
   { href: '/teacher/question-bank', label: 'Bank Soal', icon: Library },
@@ -79,7 +85,7 @@ export default function AppLayout({ children, role, userName = 'Pengguna', avata
       {/* Mobile Sidebar Overlay (for Teacher/Parent) */}
       {isMobileMenuOpen && (
         <div 
-          className="fixed inset-0 bg-ink-900/40 backdrop-blur-sm z-40 md:hidden transition-opacity" 
+          className="fixed inset-0 bg-brand-main/40 backdrop-blur-sm z-40 md:hidden transition-opacity" 
           onClick={() => setIsMobileMenuOpen(false)}
         />
       )}
@@ -90,14 +96,14 @@ export default function AppLayout({ children, role, userName = 'Pengguna', avata
         {/* Logo Area */}
         <div className="flex items-center justify-between p-6">
           <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity" onClick={() => setIsMobileMenuOpen(false)}>
-            <div className="w-10 h-10 rounded-xl bg-ink-900 text-white flex items-center justify-center shadow-md">
+            <div className="w-10 h-10 rounded-xl bg-brand-main text-brand-text flex items-center justify-center shadow-md">
               <Brain size={24} strokeWidth={2.5} />
             </div>
-            <span className="font-bold text-xl tracking-tight text-ink-900 font-display">
+            <span className="font-bold text-xl tracking-tight text-text-primary font-display">
               ThinkStep
             </span>
           </Link>
-          <button className="md:hidden text-ink-500 hover:text-ink-900" onClick={() => setIsMobileMenuOpen(false)}>
+          <button className="md:hidden text-text-muted hover:text-text-primary" onClick={() => setIsMobileMenuOpen(false)}>
             <X size={24} />
           </button>
         </div>
@@ -105,7 +111,7 @@ export default function AppLayout({ children, role, userName = 'Pengguna', avata
         {/* User Info Profile */}
         <div className="px-6 pb-6">
           <div className="flex items-center gap-3 p-3 rounded-2xl bg-surface-alt border border-border shadow-sm">
-            <div className="w-10 h-10 rounded-full bg-ink-100 text-ink-900 border border-ink-200 flex items-center justify-center text-sm font-bold shrink-0">
+            <div className="w-10 h-10 rounded-full bg-brand-light text-brand-main border border-border flex items-center justify-center text-sm font-bold shrink-0">
               {initials}
             </div>
             <div className="overflow-hidden">
@@ -129,7 +135,7 @@ export default function AppLayout({ children, role, userName = 'Pengguna', avata
               <Link key={item.href} href={item.href} onClick={() => setIsMobileMenuOpen(false)}>
                 <div className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 font-medium text-sm
                   ${isActive 
-                    ? 'bg-ink-900 text-white shadow-md' 
+                    ? 'bg-brand-main text-brand-text shadow-md' 
                     : 'text-text-secondary hover:bg-surface-alt hover:text-text-primary'
                   }`}
                 >
@@ -162,15 +168,15 @@ export default function AppLayout({ children, role, userName = 'Pengguna', avata
       <div className="flex-1 flex flex-col min-w-0 bg-surface">
         
         {/* Top Header */}
-        <header className="h-16 md:h-20 bg-white/80 backdrop-blur-xl border-b border-border flex items-center justify-between px-4 md:px-8 sticky top-0 z-20">
+        <header className="h-16 md:h-20 bg-surface/80 backdrop-blur-xl border-b border-border flex items-center justify-between px-4 md:px-8 sticky top-0 z-20">
           <div className="flex items-center gap-3">
             <button 
-              className="md:hidden p-2 -ml-2 text-text-secondary hover:text-ink-900 rounded-lg hover:bg-surface-alt transition-colors"
+              className="md:hidden p-2 -ml-2 text-text-secondary hover:text-text-primary rounded-lg hover:bg-surface-alt transition-colors"
               onClick={() => setIsMobileMenuOpen(true)}
             >
               <Menu size={24} />
             </button>
-            <h2 className="text-lg md:text-xl font-bold text-ink-900 truncate max-w-[200px] sm:max-w-md font-display">
+            <h2 className="text-lg md:text-xl font-bold text-text-primary truncate max-w-[200px] sm:max-w-md font-display">
               {nav.find(i => pathname.startsWith(i.href))?.label || 'Aplikasi'}
             </h2>
           </div>
@@ -181,12 +187,15 @@ export default function AppLayout({ children, role, userName = 'Pengguna', avata
               {isOnline ? 'Terhubung' : 'Offline'}
             </div>
             
+            <ThemeToggle />
+            <NotificationBell />
+            
             <div className="hidden md:flex items-center gap-3 pl-4 border-l border-border">
               <div className="text-right">
                 <p className="text-sm font-bold text-text-primary">{userName}</p>
                 <p className="text-xs text-text-muted font-medium">{role}</p>
               </div>
-              <div className="w-10 h-10 rounded-full bg-ink-900 text-white flex items-center justify-center text-sm font-bold shadow-sm">
+              <div className="w-10 h-10 rounded-full bg-brand-main text-brand-text flex items-center justify-center text-sm font-bold shadow-sm">
                 {initials}
               </div>
             </div>
@@ -198,27 +207,25 @@ export default function AppLayout({ children, role, userName = 'Pengguna', avata
           {children}
         </main>
         
-        {/* Mobile Bottom Navigation (Only for Students to keep it clean, or all) */}
-        {role === 'STUDENT' && (
-          <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-xl border-t border-border pb-safe pt-2 px-2 flex items-center justify-around z-30">
-            {nav.map((item) => {
-              const isActive = pathname.startsWith(item.href)
-              const Icon = item.icon
-              return (
-                <Link key={item.href} href={item.href} className="flex-1">
-                  <div className={`flex flex-col items-center justify-center gap-1 py-2 px-1 rounded-xl transition-colors
-                    ${isActive ? 'text-ink-900' : 'text-text-muted hover:text-text-primary'}`}
-                  >
-                    <div className={`${isActive ? 'bg-ink-100 rounded-full p-1.5' : 'p-1.5'}`}>
-                      <Icon size={22} className={isActive ? 'opacity-100' : 'opacity-80'} strokeWidth={isActive ? 2.5 : 2} />
-                    </div>
-                    <span className="text-[10px] font-semibold">{item.label}</span>
+        {/* Mobile Bottom Navigation */}
+        <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-surface/90 backdrop-blur-xl border-t border-border pb-safe pt-2 px-2 flex items-center overflow-x-auto z-30" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+          {nav.map((item) => {
+            const isActive = pathname.startsWith(item.href)
+            const Icon = item.icon
+            return (
+              <Link key={item.href} href={item.href} className="flex-shrink-0 min-w-[76px] flex-1">
+                <div className={`flex flex-col items-center justify-center gap-1 py-2 px-1 rounded-xl transition-colors
+                  ${isActive ? 'text-text-primary' : 'text-text-muted hover:text-text-primary'}`}
+                >
+                  <div className={`${isActive ? 'bg-brand-light rounded-full p-1.5' : 'p-1.5'}`}>
+                    <Icon size={22} className={isActive ? 'opacity-100' : 'opacity-80'} strokeWidth={isActive ? 2.5 : 2} />
                   </div>
-                </Link>
-              )
-            })}
-          </nav>
-        )}
+                  <span className="text-[10px] font-semibold text-center leading-tight truncate w-full">{item.label}</span>
+                </div>
+              </Link>
+            )
+          })}
+        </nav>
       </div>
     </div>
   )

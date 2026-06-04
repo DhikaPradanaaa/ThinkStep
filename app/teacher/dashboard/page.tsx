@@ -86,10 +86,10 @@ export default async function TeacherDashboardPage() {
 
   return (
     <AppLayout role="TEACHER" userName={userName} avatarColor={avatarColor}>
-      <div style={{ padding: '2rem', maxWidth: '1400px', margin: '0 auto' }}>
+      <div className="p-4 sm:p-6 lg:p-8 max-w-[1400px] mx-auto w-full">
 
         {/* Page Header */}
-        <div style={{ marginBottom: '1.75rem', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+        <div className="mb-6 flex flex-col sm:flex-row sm:items-start justify-between gap-4">
           <div>
             <h1 className="text-display-sm" style={{ color: 'var(--color-text-primary)', marginBottom: '0.25rem' }}>
               Dashboard Analitik
@@ -99,23 +99,19 @@ export default async function TeacherDashboardPage() {
             </p>
           </div>
 
-          <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', alignItems: 'flex-start' }}>
+          <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
             <GenerateDailyQuestionsButton />
-            <Link href="/teacher/exam/new">
-              <button className="btn-secondary" style={{ fontSize: '0.8rem' }}>
-                📋 Buat Ujian
-              </button>
+            <Link href="/teacher/exam/new" className="btn-secondary text-sm px-4 py-2">
+              📋 Buat Ujian
             </Link>
-            <Link href="/teacher/assignments/new">
-              <button className="btn-primary" style={{ fontSize: '0.8rem' }}>
-                + Tugas Baru
-              </button>
+            <Link href="/teacher/assignments/new" className="btn-primary text-sm px-4 py-2">
+              + Tugas Baru
             </Link>
           </div>
         </div>
 
         {/* Overview Cards */}
-        <div style={{ marginBottom: '1.5rem' }}>
+        <div className="mb-6">
           <OverviewCards
             activeStudents={activeStudents}
             avgHints={avgHints}
@@ -125,21 +121,13 @@ export default async function TeacherDashboardPage() {
         </div>
 
         {/* Charts Row */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 380px',
-          gap: '1.5rem',
-          marginBottom: '1.5rem',
-        }}>
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-6 mb-6">
           <HintDistributionChart />
           <TopicHeatmap />
         </div>
 
         {/* Quick Actions */}
-        <div style={{
-          display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)',
-          gap: '1rem', marginBottom: '1.5rem',
-        }}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
           {[
             { icon: '👥', label: 'Daftar Siswa', desc: 'Lihat semua siswa & detail', href: '/teacher/students', color: '#059669', bg: '#ECFDF5' },
             { icon: '📚', label: 'Bank Soal', desc: 'Kelola & tambah soal', href: '/teacher/question-bank', color: '#3B82F6', bg: '#EFF6FF' },

@@ -37,7 +37,7 @@ export default function Leaderboard({ users, currentUserId }: LeaderboardProps) 
                 {index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `#${index + 1}`}
               </div>
               
-              <div className="w-8 h-8 rounded-full text-white flex items-center justify-center text-xs font-bold flex-shrink-0" style={{ backgroundColor: u.user.avatarColor || '#3B82F6' }}>
+              <div className="w-8 h-8 rounded-full text-brand-text flex items-center justify-center text-xs font-bold flex-shrink-0" style={{ backgroundColor: u.user.avatarColor || '#3B82F6' }}>
                 {u.user.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
               </div>
               

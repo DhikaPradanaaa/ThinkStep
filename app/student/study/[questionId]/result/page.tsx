@@ -66,7 +66,7 @@ export default async function ResultPage({
           >
             {isPassing ? '🏆' : '💪'}
           </div>
-          <h1 className="text-display-md text-ink-900 mb-2">Sesi Selesai!</h1>
+          <h1 className="text-display-md text-text-primary mb-2">Sesi Selesai!</h1>
           <p className="text-text-secondary">
             Kamu telah menyelesaikan sesi belajar untuk materi ini.
           </p>
@@ -91,7 +91,7 @@ export default async function ResultPage({
           </div>
           <div className="text-right">
             <p className="text-xs text-text-muted font-medium">Total Poin Kamu</p>
-            <p className="text-2xl font-bold text-ink-900">{(userStats?.totalPoints ?? 0).toLocaleString('id-ID')}</p>
+            <p className="text-2xl font-bold text-text-primary">{(userStats?.totalPoints ?? 0).toLocaleString('id-ID')}</p>
           </div>
         </div>
 
@@ -103,11 +103,11 @@ export default async function ResultPage({
               {newBadgeObjects.map((badge) => (
                 <div
                   key={badge.id}
-                  className="flex items-center gap-2 px-4 py-2 bg-white rounded-full border border-violet-200 shadow-sm"
+                  className="flex items-center gap-2 px-4 py-2 bg-surface rounded-full border border-violet-200 shadow-sm"
                 >
                   <span className="text-2xl">{badge.icon}</span>
                   <div>
-                    <p className="text-sm font-bold text-ink-900">{badge.name}</p>
+                    <p className="text-sm font-bold text-text-primary">{badge.name}</p>
                     <p className="text-xs text-text-muted">{badge.description}</p>
                   </div>
                 </div>
@@ -122,7 +122,7 @@ export default async function ResultPage({
             <div>
               <p className="text-sm font-bold text-brand-main uppercase tracking-wider mb-1">Nilai Akhir</p>
               <div className="flex items-end gap-3">
-                <span className="text-5xl font-display font-black text-ink-900">
+                <span className="text-5xl font-display font-black text-text-primary">
                   {finalScore !== null && finalScore !== undefined ? Math.round(finalScore as number) : '-'}
                 </span>
                 <span className="text-lg text-text-muted mb-1">/ 100</span>
@@ -134,7 +134,7 @@ export default async function ResultPage({
 
             <div className="mt-4 md:mt-0 text-left md:text-right space-y-1">
               <p className="text-sm font-semibold text-text-muted">Topik</p>
-              <p className="font-bold text-ink-900">{learningSession.question?.topic || 'Latihan Mandiri'}</p>
+              <p className="font-bold text-text-primary">{learningSession.question?.topic || 'Latihan Mandiri'}</p>
               <p className="text-xs text-text-muted">
                 🧠 Hint digunakan: <strong className="text-ink-700">{learningSession.hintsUsed}</strong> / 3
               </p>
@@ -145,7 +145,7 @@ export default async function ResultPage({
           </div>
 
           <div>
-            <h3 className="text-base font-bold text-ink-900 mb-3 flex items-center gap-2">
+            <h3 className="text-base font-bold text-text-primary mb-3 flex items-center gap-2">
               🤖 Analisis Lumina AI
             </h3>
             <div className="bg-surface-alt rounded-xl p-5 border border-border/50 text-text-primary leading-relaxed whitespace-pre-wrap">
@@ -154,12 +154,12 @@ export default async function ResultPage({
           </div>
 
           <div className="mt-8 border-t border-border pt-6">
-            <h3 className="text-sm font-bold text-ink-900 mb-4 uppercase tracking-wider text-text-muted">
+            <h3 className="text-sm font-bold text-text-primary mb-4 uppercase tracking-wider text-text-muted">
               Jawaban Tersimpan
             </h3>
 
             {learningSession.finalAnswerText && (
-              <div className="bg-white border border-border rounded-lg p-4 mb-4 text-sm whitespace-pre-wrap text-text-primary shadow-sm">
+              <div className="bg-surface border border-border rounded-lg p-4 mb-4 text-sm whitespace-pre-wrap text-text-primary shadow-sm">
                 {learningSession.finalAnswerText}
               </div>
             )}

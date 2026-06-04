@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/db'
+import { createNotificationForClass } from '@/lib/notifications/create'
+
 
 export async function POST(req: NextRequest) {
   const session = await auth()
@@ -34,6 +36,16 @@ export async function POST(req: NextRequest) {
         createdById: user.id,
       },
     })
+
+    if (classId) {
+      await createNotificationForClass({
+        classId,
+        type: 'ASSIGNMENT_NEW',
+        title: 'Tugas Baru: ' + title,
+        message: 'Guru telah memberikan tugas baru. Segera kerjakan!',
+        href: '/student/assignments',
+      })
+    }
 
     return NextResponse.json(assignment)
   } catch (error) {

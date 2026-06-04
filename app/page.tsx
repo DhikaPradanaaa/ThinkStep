@@ -12,10 +12,10 @@ export default function LandingPage() {
       {/* Navigation */}
       <nav className="sticky top-0 z-50 glass-panel flex items-center justify-between px-6 py-4 mx-4 mt-4 rounded-2xl">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-ink-900 text-white flex items-center justify-center shadow-md">
+          <div className="w-10 h-10 rounded-xl bg-brand-main text-brand-text flex items-center justify-center shadow-md">
             <Brain size={24} strokeWidth={2.5} />
           </div>
-          <span className="font-bold text-xl tracking-tight text-ink-900 font-display">
+          <span className="font-bold text-xl tracking-tight text-text-primary font-display">
             ThinkStep
           </span>
         </div>
@@ -35,12 +35,12 @@ export default function LandingPage() {
       {/* Hero Section */}
       <section className="relative z-10 flex-1 flex flex-col items-center justify-center text-center px-6 py-24 md:py-32 w-full max-w-5xl mx-auto">
         <div className="slide-up mb-8">
-          <span className="inline-flex items-center gap-2 bg-white/60 backdrop-blur-md border border-border/80 shadow-sm rounded-full px-5 py-2 text-xs md:text-sm font-semibold text-text-secondary">
-            <Sparkles size={16} className="text-ink-900" /> Sesuai Regulasi Pendidikan 2026
+          <span className="inline-flex items-center gap-2 bg-surface/60 backdrop-blur-md border border-border/80 shadow-sm rounded-full px-5 py-2 text-xs md:text-sm font-semibold text-text-secondary">
+            <Sparkles size={16} className="text-text-primary" /> Sesuai Regulasi Pendidikan 2026
           </span>
         </div>
 
-        <h1 className="text-display-md md:text-display-lg slide-up mb-8 text-ink-900 max-w-4xl mx-auto drop-shadow-sm">
+        <h1 className="text-display-md md:text-display-lg slide-up mb-8 text-text-primary max-w-4xl mx-auto drop-shadow-sm">
           Bukan AI yang Menjawab —<br className="hidden md:block" />
           Tapi AI yang <span className="text-text-muted">Membimbing</span><br className="hidden md:block" />
           Kamu Menemukan Jawaban.
@@ -57,7 +57,7 @@ export default function LandingPage() {
             </button>
           </Link>
           <Link href="#features" className="w-full sm:w-auto">
-            <button className="btn-secondary w-full sm:w-auto py-4 px-10 text-base font-semibold rounded-xl bg-white/60 backdrop-blur-md">
+            <button className="btn-secondary w-full sm:w-auto py-4 px-10 text-base font-semibold rounded-xl bg-surface/60 backdrop-blur-md">
               Pelajari Lebih Lanjut
             </button>
           </Link>
@@ -68,7 +68,7 @@ export default function LandingPage() {
       <section id="features" className="relative z-10 px-6 py-24 bg-surface-alt/50 border-t border-border">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16 md:mb-20">
-            <h2 className="text-heading-lg md:text-display-sm text-ink-900 mb-5">Satu Platform, Tiga Pendekatan</h2>
+            <h2 className="text-heading-lg md:text-display-sm text-text-primary mb-5">Satu Platform, Tiga Pendekatan</h2>
             <p className="text-body-md text-text-secondary max-w-2xl mx-auto">
               Didesain khusus untuk ekosistem pendidikan modern dengan transparansi penuh untuk siswa, guru, dan orang tua.
             </p>
@@ -76,33 +76,33 @@ export default function LandingPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Feature 1 */}
-            <div className="card card-hover group p-8 rounded-3xl bg-white shadow-sm border-border">
-              <div className="w-14 h-14 rounded-2xl bg-surface-alt border border-border flex items-center justify-center mb-6 text-ink-900 group-hover:scale-110 transition-transform duration-300 shadow-sm">
+            <div className="card card-hover group p-8 rounded-3xl bg-surface shadow-sm border-border">
+              <div className="w-14 h-14 rounded-2xl bg-surface-alt border border-border flex items-center justify-center mb-6 text-text-primary group-hover:scale-110 transition-transform duration-300 shadow-sm">
                 <Brain size={28} />
               </div>
-              <h3 className="text-heading-md mb-4 text-ink-900">Bimbingan Lumina AI</h3>
+              <h3 className="text-heading-md mb-4 text-text-primary">Bimbingan Lumina AI</h3>
               <p className="text-body-md text-text-secondary">
                 Siswa dipandu secara bertahap (scaffolding). Mereka akan berdiskusi dan dibimbing menemukan alur berpikir mandiri. Tidak ada *shortcut* ke kunci jawaban.
               </p>
             </div>
 
             {/* Feature 2 */}
-            <div className="card card-hover group p-8 rounded-3xl bg-white shadow-sm border-border">
-              <div className="w-14 h-14 rounded-2xl bg-surface-alt border border-border flex items-center justify-center mb-6 text-ink-900 group-hover:scale-110 transition-transform duration-300 shadow-sm">
+            <div className="card card-hover group p-8 rounded-3xl bg-surface shadow-sm border-border">
+              <div className="w-14 h-14 rounded-2xl bg-surface-alt border border-border flex items-center justify-center mb-6 text-text-primary group-hover:scale-110 transition-transform duration-300 shadow-sm">
                 <Target size={28} />
               </div>
-              <h3 className="text-heading-md mb-4 text-ink-900">Pemantauan Guru</h3>
+              <h3 className="text-heading-md mb-4 text-text-primary">Pemantauan Guru</h3>
               <p className="text-body-md text-text-secondary">
                 Guru memiliki kontrol penuh atas bank soal. Metrik pemahaman dan kendala siswa dapat dilacak secara real-time di Dashboard Guru.
               </p>
             </div>
 
             {/* Feature 3 */}
-            <div className="card card-hover group p-8 rounded-3xl bg-white shadow-sm border-border">
-              <div className="w-14 h-14 rounded-2xl bg-surface-alt border border-border flex items-center justify-center mb-6 text-ink-900 group-hover:scale-110 transition-transform duration-300 shadow-sm">
+            <div className="card card-hover group p-8 rounded-3xl bg-surface shadow-sm border-border">
+              <div className="w-14 h-14 rounded-2xl bg-surface-alt border border-border flex items-center justify-center mb-6 text-text-primary group-hover:scale-110 transition-transform duration-300 shadow-sm">
                 <BookOpen size={28} />
               </div>
-              <h3 className="text-heading-md mb-4 text-ink-900">Laporan Orang Tua</h3>
+              <h3 className="text-heading-md mb-4 text-text-primary">Laporan Orang Tua</h3>
               <p className="text-body-md text-text-secondary">
                 Sistem mengirimkan ringkasan kemajuan belajar mingguan langsung kepada orang tua untuk menjamin transparansi pendidikan di rumah.
               </p>
@@ -112,7 +112,7 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="relative z-10 py-12 px-6 border-t border-border bg-white text-center">
+      <footer className="relative z-10 py-12 px-6 border-t border-border bg-surface text-center">
         <div className="flex items-center justify-center gap-2 mb-4 opacity-80">
           <Brain size={20} className="text-ink-400" />
           <span className="font-bold text-ink-500 font-display">ThinkStep</span>

@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/db'
 import AppLayout from '@/components/layout/AppLayout'
 import Link from 'next/link'
+import DeleteQuestionButton from '@/components/teacher/DeleteQuestionButton'
 
 export const dynamic = 'force-dynamic'
 
@@ -83,12 +84,11 @@ export default async function QuestionBankPage({ searchParams }: QuestionBankPag
             <button
               className="btn-secondary"
               style={{ fontSize: '0.8rem' }}
-              onClick={undefined}
               title="Fitur import CSV akan segera hadir"
             >📥 Import CSV</button>
             {/* BUG-002 FIX: Link to a future question creation page */}
-            <Link href="/teacher/question-bank/new">
-              <button className="btn-primary" style={{ fontSize: '0.8rem' }}>+ Tambah Soal</button>
+            <Link href="/teacher/question-bank/new" className="btn-primary" style={{ fontSize: '0.8rem', padding: '8px 16px', display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
+              + Tambah Soal
             </Link>
           </div>
         </div>
@@ -98,18 +98,20 @@ export default async function QuestionBankPage({ searchParams }: QuestionBankPag
           <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--color-text-muted)' }}>Filter:</span>
           <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
             {SUBJECTS.map(subj => (
-              <Link key={subj} href={`/teacher/question-bank?subject=${subj}&difficulty=${selectedDifficulty}`}>
-                <button style={{
+              <Link 
+                key={subj} 
+                href={`/teacher/question-bank?subject=${subj}&difficulty=${selectedDifficulty}`}
+                style={{
                   padding: '5px 12px', borderRadius: '9999px',
                   fontSize: '0.78rem', fontWeight: 500, cursor: 'pointer',
-                  border: '1px solid',
+                  border: '1px solid', textDecoration: 'none',
                   borderColor: selectedSubject === subj ? 'var(--color-ink-400)' : 'var(--color-border)',
                   background: selectedSubject === subj ? 'var(--color-ink-50)' : 'white',
                   color: selectedSubject === subj ? 'var(--color-ink-700)' : 'var(--color-text-secondary)',
                   transition: 'all 150ms ease',
-                }}>
-                  {subj}
-                </button>
+                }}
+              >
+                {subj}
               </Link>
             ))}
           </div>
@@ -118,17 +120,19 @@ export default async function QuestionBankPage({ searchParams }: QuestionBankPag
 
           <div style={{ display: 'flex', gap: '0.5rem' }}>
             {DIFFICULTIES.map(diff => (
-              <Link key={diff} href={`/teacher/question-bank?subject=${selectedSubject}&difficulty=${diff}`}>
-                <button style={{
+              <Link 
+                key={diff} 
+                href={`/teacher/question-bank?subject=${selectedSubject}&difficulty=${diff}`}
+                style={{
                   padding: '5px 12px', borderRadius: '9999px',
                   fontSize: '0.78rem', fontWeight: 500, cursor: 'pointer',
-                  border: '1px solid',
+                  border: '1px solid', textDecoration: 'none',
                   borderColor: selectedDifficulty === diff ? 'var(--color-ink-400)' : 'var(--color-border)',
                   background: selectedDifficulty === diff ? 'var(--color-ink-50)' : 'white',
                   color: selectedDifficulty === diff ? 'var(--color-ink-700)' : 'var(--color-text-secondary)',
-                }}>
-                  {diff === 'Semua' ? diff : DIFFICULTY_LABEL[diff] || diff}
-                </button>
+                }}
+              >
+                {diff === 'Semua' ? diff : DIFFICULTY_LABEL[diff] || diff}
               </Link>
             ))}
           </div>
@@ -179,26 +183,22 @@ export default async function QuestionBankPage({ searchParams }: QuestionBankPag
 
                 {/* Actions */}
                 <div style={{ display: 'flex', gap: '6px', flexShrink: 0 }}>
-                  <Link href={`/teacher/question-bank/${q.id}/results`}>
-                    <button className="btn-secondary" style={{ fontSize: '0.75rem', padding: '4px 10px', background: '#ECFDF5', color: '#059669', borderColor: '#059669' }}>
-                      📋 Lihat Rekap Nilai
-                    </button>
+                  <Link 
+                    href={`/teacher/question-bank/${q.id}/results`}
+                    className="btn-secondary" 
+                    style={{ fontSize: '0.75rem', padding: '4px 10px', background: '#ECFDF5', color: '#059669', borderColor: '#059669', textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}
+                  >
+                    📋 Lihat Rekap Nilai
                   </Link>
                   {/* BUG-002 FIX: Edit & Delete are stubs until backend is implemented */}
-                  <Link href={`/teacher/question-bank/${q.id}/edit`}>
-                    <button className="btn-ghost" style={{ fontSize: '0.75rem', padding: '4px 10px' }}>Edit</button>
+                  <Link 
+                    href={`/teacher/question-bank/${q.id}/edit`}
+                    className="btn-ghost" 
+                    style={{ fontSize: '0.75rem', padding: '4px 10px', textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}
+                  >
+                    Edit
                   </Link>
-                  <button
-                    className="btn-ghost"
-                    style={{ fontSize: '0.75rem', padding: '4px 10px', color: 'var(--color-danger-main)' }}
-                    onClick={() => {
-                      if (confirm(`Hapus soal "${q.content.slice(0, 50)}..."?`)) {
-                        fetch(`/api/question/${q.id}`, { method: 'DELETE' })
-                          .then(r => r.ok ? window.location.reload() : alert('Gagal menghapus soal'))
-                          .catch(() => alert('Gagal menghapus soal'))
-                      }
-                    }}
-                  >Hapus</button>
+                  <DeleteQuestionButton questionId={q.id} questionContent={q.content} />
                 </div>
               </div>
             </div>

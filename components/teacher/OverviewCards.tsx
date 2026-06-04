@@ -58,11 +58,7 @@ export default function OverviewCards({ activeStudents, avgHints, noHintPercent,
   ]
 
   return (
-    <div style={{
-      display: 'grid',
-      gridTemplateColumns: 'repeat(4, 1fr)',
-      gap: '1rem',
-    }}>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       {cards.map((card) => (
         <div key={card.title} className="card hover-lift" style={{ padding: '1.25rem' }}>
           <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '1rem' }}>

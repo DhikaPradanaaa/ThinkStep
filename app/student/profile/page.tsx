@@ -54,7 +54,7 @@ export default async function ProfilePage() {
           <div className="md:col-span-2 space-y-6">
             <div className="card p-6">
               <div className="flex items-center gap-4 mb-6 pb-6 border-b border-border">
-                 <div className="w-16 h-16 rounded-full text-white flex items-center justify-center text-xl font-bold" style={{ backgroundColor: user?.avatarColor || '#3B82F6' }}>
+                 <div className="w-16 h-16 rounded-full text-brand-text flex items-center justify-center text-xl font-bold" style={{ backgroundColor: user?.avatarColor || '#3B82F6' }}>
                    {user?.name?.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
                  </div>
                  <div>

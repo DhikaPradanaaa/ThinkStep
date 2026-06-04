@@ -85,7 +85,7 @@ export default function StudentTable({ students = DEMO_STUDENTS }: Partial<Stude
   return (
     <div className="card" style={{ padding: '1.5rem' }}>
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '0.75rem' }}>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-5 gap-3">
         <div>
           <h3 className="text-heading-sm" style={{ color: 'var(--color-text-primary)' }}>Data Siswa</h3>
           <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: '2px' }}>

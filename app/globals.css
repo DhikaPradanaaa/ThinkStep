@@ -12,28 +12,28 @@
   --color-ink-800: #27272a;
   --color-ink-900: #18181b;
 
-  --color-surface: #ffffff;
-  --color-surface-alt: #fafafa;
-  --color-border: #e4e4e7;
-  --color-text-primary: #18181b;
-  --color-text-secondary: #52525b;
-  --color-text-muted: #a1a1aa;
+  --color-surface: var(--theme-surface);
+  --color-surface-alt: var(--theme-surface-alt);
+  --color-border: var(--theme-border);
+  --color-text-primary: var(--theme-text-primary);
+  --color-text-secondary: var(--theme-text-secondary);
+  --color-text-muted: var(--theme-text-muted);
 
-  --color-brand-main: #000000;
-  --color-brand-light: #f4f4f5;
-  --color-brand-text: #ffffff;
+  --color-brand-main: var(--theme-brand-main);
+  --color-brand-light: var(--theme-brand-light);
+  --color-brand-text: var(--theme-brand-text);
 
-  --color-hint-light: #fef3c7;
-  --color-hint-main: #f59e0b;
-  --color-hint-dark: #b45309;
+  --color-hint-light: var(--theme-hint-light);
+  --color-hint-main: var(--theme-hint-main);
+  --color-hint-dark: var(--theme-hint-dark);
 
-  --color-success-light: #ecfdf5;
-  --color-success-main: #10b981;
-  --color-success-dark: #047857;
+  --color-success-light: var(--theme-success-light);
+  --color-success-main: var(--theme-success-main);
+  --color-success-dark: var(--theme-success-dark);
 
-  --color-danger-light: #fef2f2;
-  --color-danger-main: #ef4444;
-  --color-danger-dark: #b91c1c;
+  --color-danger-light: var(--theme-danger-light);
+  --color-danger-main: var(--theme-danger-main);
+  --color-danger-dark: var(--theme-danger-dark);
 
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-display), ui-sans-serif, system-ui, sans-serif;
@@ -59,28 +59,53 @@
   --color-ink-800: #27272a;
   --color-ink-900: #18181b;
 
-  --color-surface: #ffffff;
-  --color-surface-alt: #fafafa;
-  --color-border: #e4e4e7;
-  --color-text-primary: #18181b;
-  --color-text-secondary: #52525b;
-  --color-text-muted: #a1a1aa;
+  --theme-surface: #ffffff;
+  --theme-surface-alt: #fafafa;
+  --theme-border: #e4e4e7;
+  --theme-text-primary: #18181b;
+  --theme-text-secondary: #52525b;
+  --theme-text-muted: #a1a1aa;
 
-  --color-brand-main: #000000;
-  --color-brand-light: #f4f4f5;
-  --color-brand-text: #ffffff;
+  --theme-brand-main: #000000;
+  --theme-brand-light: #f4f4f5;
+  --theme-brand-text: #ffffff;
 
-  --color-hint-light: #fef3c7;
-  --color-hint-main: #f59e0b;
-  --color-hint-dark: #b45309;
+  --theme-hint-light: #fef3c7;
+  --theme-hint-main: #f59e0b;
+  --theme-hint-dark: #b45309;
 
-  --color-success-light: #ecfdf5;
-  --color-success-main: #10b981;
-  --color-success-dark: #047857;
+  --theme-success-light: #ecfdf5;
+  --theme-success-main: #10b981;
+  --theme-success-dark: #047857;
 
-  --color-danger-light: #fef2f2;
-  --color-danger-main: #ef4444;
-  --color-danger-dark: #b91c1c;
+  --theme-danger-light: #fef2f2;
+  --theme-danger-main: #ef4444;
+  --theme-danger-dark: #b91c1c;
+}
+
+.dark {
+  --theme-surface: #09090b;
+  --theme-surface-alt: #18181b;
+  --theme-border: #27272a;
+  --theme-text-primary: #fafafa;
+  --theme-text-secondary: #a1a1aa;
+  --theme-text-muted: #71717a;
+
+  --theme-brand-main: #ffffff;
+  --theme-brand-light: #27272a;
+  --theme-brand-text: #000000;
+
+  --theme-hint-light: #451a03;
+  --theme-hint-main: #f59e0b;
+  --theme-hint-dark: #fde68a;
+
+  --theme-success-light: #064e3b;
+  --theme-success-main: #10b981;
+  --theme-success-dark: #a7f3d0;
+
+  --theme-danger-light: #450a0a;
+  --theme-danger-main: #ef4444;
+  --theme-danger-dark: #fecaca;
 
   --radius-sm: 0.375rem;
   --radius-md: 0.5rem;
@@ -99,7 +124,7 @@
   }
 
   body {
-    @apply bg-surface text-text-primary antialiased;
+    @apply bg-surface-alt text-text-primary antialiased;
   }
 
   h1,
@@ -222,7 +247,17 @@
 
   /* Glass Panel */
   .glass-panel {
-    @apply bg-white/80 backdrop-blur-xl border border-white/20 shadow-[var(--shadow-glass)];
+    @apply bg-surface/80 backdrop-blur-xl border border-border/50 shadow-[var(--shadow-glass)];
+  }
+
+  /* Glass Card */
+  .glass-card {
+    @apply bg-surface backdrop-blur-lg border-2 border-border/60 rounded-2xl shadow-md transition-all duration-300;
+  }
+
+  /* Hover Lift */
+  .hover-lift:hover {
+    @apply -translate-y-1 shadow-md border-brand-main/30;
   }
 
   /* Badges */

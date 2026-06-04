@@ -124,7 +124,7 @@ export default function RegisterPage() {
           <div className="w-20 h-20 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-6 shadow-lg">
             <CheckCircle2 size={40} className="text-emerald-500" />
           </div>
-          <h1 className="text-heading-lg text-ink-900 mb-3">Akun Berhasil Dibuat! 🎉</h1>
+          <h1 className="text-heading-lg text-text-primary mb-3">Akun Berhasil Dibuat! 🎉</h1>
           <p className="text-text-secondary text-base mb-2">
             Selamat datang di ThinkStep, <strong>{form.name.split(' ')[0]}</strong>!
           </p>
@@ -147,10 +147,10 @@ export default function RegisterPage() {
         {/* Logo */}
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-3 justify-center mb-3 group hover:opacity-90 transition-opacity">
-            <div className="w-12 h-12 rounded-2xl bg-ink-900 text-white flex items-center justify-center shadow-xl shadow-ink-900/20 group-hover:scale-105 transition-transform duration-300">
+            <div className="w-12 h-12 rounded-2xl bg-brand-main text-brand-text flex items-center justify-center shadow-xl shadow-ink-900/20 group-hover:scale-105 transition-transform duration-300">
               <Brain size={28} strokeWidth={2.5} />
             </div>
-            <span className="font-bold text-2xl text-ink-900 tracking-tight font-display">
+            <span className="font-bold text-2xl text-text-primary tracking-tight font-display">
               ThinkStep
             </span>
           </Link>
@@ -161,7 +161,7 @@ export default function RegisterPage() {
 
         {/* Register Card */}
         <div className="glass-panel rounded-3xl p-8 sm:p-10 relative">
-          <h2 className="text-heading-md text-ink-900 mb-6 font-display">Daftar Akun</h2>
+          <h2 className="text-heading-md text-text-primary mb-6 font-display">Daftar Akun</h2>
 
           {error && (
             <div className="bg-danger-light text-danger-dark border border-danger-main/30 rounded-xl p-4 mb-6 text-sm flex items-start gap-3">
@@ -184,7 +184,7 @@ export default function RegisterPage() {
                     onClick={() => setRole(value)}
                     className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 text-center transition-all duration-200 cursor-pointer ${
                       form.role === value
-                        ? 'border-ink-900 bg-ink-900 text-white shadow-lg'
+                        ? 'border-brand-main bg-brand-main text-brand-text shadow-lg'
                         : 'border-border bg-surface text-text-secondary hover:border-ink-400 hover:bg-surface-alt'
                     }`}
                   >
@@ -360,14 +360,14 @@ export default function RegisterPage() {
           {/* Link ke Login */}
           <p className="text-center mt-6 text-sm text-text-muted">
             Sudah punya akun?{' '}
-            <Link href="/login" className="font-semibold text-ink-800 hover:text-ink-900 transition-colors underline underline-offset-2">
+            <Link href="/login" className="font-semibold text-ink-800 hover:text-text-primary transition-colors underline underline-offset-2">
               Masuk di sini
             </Link>
           </p>
         </div>
 
         <p className="text-center mt-6 text-sm text-text-muted">
-          <Link href="/" className="font-semibold text-text-secondary hover:text-ink-900 transition-colors inline-flex items-center gap-1">
+          <Link href="/" className="font-semibold text-text-secondary hover:text-text-primary transition-colors inline-flex items-center gap-1">
             ← Kembali ke Beranda
           </Link>
         </p>

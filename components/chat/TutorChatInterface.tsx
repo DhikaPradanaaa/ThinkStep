@@ -127,7 +127,7 @@ export default function TutorChatInterface({
         <div className="w-8 h-8 rounded-lg bg-surface-alt flex items-center justify-center mr-3 border border-border shadow-sm">
            <MessageSquareText size={16} className="text-brand-main" />
         </div>
-        <h1 className="text-base font-bold text-ink-900 tracking-tight truncate font-display">
+        <h1 className="text-base font-bold text-text-primary tracking-tight truncate font-display">
           Tanya Lumina AI
         </h1>
       </div>
@@ -139,7 +139,7 @@ export default function TutorChatInterface({
             <div className="w-20 h-20 rounded-3xl bg-surface-alt border border-border flex items-center justify-center mb-6 shadow-sm">
               <BrainCircuit size={40} className="text-brand-main" />
             </div>
-            <p className="font-semibold text-ink-900 mb-1 font-display">Halo {studentName}!</p>
+            <p className="font-semibold text-text-primary mb-1 font-display">Halo {studentName}!</p>
             <p className="text-sm max-w-sm">Ada materi pelajaran yang membingungkan? Tanyakan saja di sini, Lumina akan membimbingmu perlahan.</p>
           </div>
         )}
@@ -174,7 +174,7 @@ export default function TutorChatInterface({
               onChange={handleInputChange}
               onKeyDown={handleKeyDown}
               placeholder="Tanya sesuatu tentang pelajaran..."
-              className="input-base resize-none min-h-[52px] max-h-[160px] py-3.5 shadow-sm bg-white"
+              className="input-base resize-none min-h-[52px] max-h-[160px] py-3.5 shadow-sm bg-surface"
               disabled={isLoading && !isStreaming}
               rows={1}
             />
@@ -183,7 +183,7 @@ export default function TutorChatInterface({
           <button
             onClick={handleSendMessage}
             disabled={!inputValue.trim() || isLoading}
-            className="flex-shrink-0 bg-brand-main hover:bg-brand-dark text-white p-3.5 rounded-xl shadow-md shadow-brand-main/20 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed mb-0.5"
+            className="flex-shrink-0 bg-brand-main hover:bg-brand-light text-brand-text p-3.5 rounded-xl shadow-md shadow-brand-main/20 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed mb-0.5"
           >
             <SendHorizonal size={22} />
           </button>

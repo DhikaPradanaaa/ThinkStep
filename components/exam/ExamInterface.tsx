@@ -193,7 +193,7 @@ export default function ExamInterface({
         <div className="mx-auto max-w-5xl px-4 py-4">
           <div className="grid gap-4 md:grid-cols-[1fr_220px] md:items-center">
             <div className="flex items-start gap-3">
-              <div className="mt-1 rounded-xl bg-white p-2 text-danger-main shadow-sm">
+              <div className="mt-1 rounded-xl bg-surface p-2 text-danger-main shadow-sm">
                 <Lock size={22} aria-hidden="true" />
               </div>
               <div>
@@ -257,7 +257,7 @@ export default function ExamInterface({
         ) : (
           <>
             <section className="card flex-1 !p-0 overflow-hidden">
-              <div className="border-b border-border bg-white px-5 py-4">
+              <div className="border-b border-border bg-surface px-5 py-4">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div>
                     <p className="text-label-sm text-text-secondary">
@@ -296,7 +296,7 @@ export default function ExamInterface({
               </div>
             </section>
 
-            <footer className="sticky bottom-0 mt-5 rounded-2xl border border-white/50 bg-white/80 p-4 shadow-lg backdrop-blur">
+            <footer className="sticky bottom-0 mt-5 rounded-2xl border border-white/50 bg-surface/80 p-4 shadow-lg backdrop-blur">
               <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                 <div className="flex gap-2">
                   <button
@@ -338,7 +338,7 @@ export default function ExamInterface({
           aria-modal="true"
           aria-labelledby="focus-warning-title"
         >
-          <div className="w-full max-w-md rounded-2xl border border-danger-main bg-white p-6 text-center shadow-2xl">
+          <div className="w-full max-w-md rounded-2xl border border-danger-main bg-surface p-6 text-center shadow-2xl">
             <AlertTriangle className="mx-auto mb-4 text-danger-main" size={44} />
             <h2 id="focus-warning-title" className="text-heading-lg mb-2">
               Fokus ujian tercatat

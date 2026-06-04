@@ -75,10 +75,10 @@ function LoginForm() {
         {/* Logo */}
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-3 justify-center mb-3 group hover:opacity-90 transition-opacity">
-            <div className="w-12 h-12 rounded-2xl bg-ink-900 text-white flex items-center justify-center shadow-xl shadow-ink-900/20 group-hover:scale-105 transition-transform duration-300">
+            <div className="w-12 h-12 rounded-2xl bg-brand-main text-brand-text flex items-center justify-center shadow-xl shadow-ink-900/20 group-hover:scale-105 transition-transform duration-300">
               <Brain size={28} strokeWidth={2.5} />
             </div>
-            <span className="font-bold text-2xl text-ink-900 tracking-tight font-display">
+            <span className="font-bold text-2xl text-text-primary tracking-tight font-display">
               ThinkStep
             </span>
           </Link>
@@ -138,6 +138,11 @@ function LoginForm() {
                 required
                 autoComplete="current-password"
               />
+              <div className="flex justify-end mt-1">
+                <Link href="/forgot-password" className="text-xs font-semibold text-brand-main hover:text-brand-dark transition-colors">
+                  Lupa Password?
+                </Link>
+              </div>
             </div>
 
             <button
@@ -165,7 +170,7 @@ function LoginForm() {
                 id="goto-register"
                 className="btn-secondary w-full py-3 gap-2 font-semibold hover:border-ink-400 group"
               >
-                <UserPlus size={16} className="text-ink-600 group-hover:text-ink-900 transition-colors" />
+                <UserPlus size={16} className="text-ink-600 group-hover:text-text-primary transition-colors" />
                 Daftar Akun Baru
               </button>
             </Link>
@@ -183,7 +188,7 @@ function LoginForm() {
                 className="btn-secondary py-2.5 px-3 flex-col gap-1 h-auto text-[10px] font-semibold hover:border-ink-400 group"
                 onClick={() => fillDemo('student')}
               >
-                <GraduationCap size={20} className="text-ink-600 group-hover:text-ink-900 transition-colors" />
+                <GraduationCap size={20} className="text-ink-600 group-hover:text-text-primary transition-colors" />
                 Demo Siswa
               </button>
               <button
@@ -192,7 +197,7 @@ function LoginForm() {
                 className="btn-secondary py-2.5 px-3 flex-col gap-1 h-auto text-[10px] font-semibold hover:border-ink-400 group"
                 onClick={() => fillDemo('teacher')}
               >
-                <Presentation size={20} className="text-ink-600 group-hover:text-ink-900 transition-colors" />
+                <Presentation size={20} className="text-ink-600 group-hover:text-text-primary transition-colors" />
                 Demo Guru
               </button>
               <button
@@ -201,7 +206,7 @@ function LoginForm() {
                 className="btn-secondary py-2.5 px-3 flex-col gap-1 h-auto text-[10px] font-semibold hover:border-ink-400 group"
                 onClick={() => fillDemo('parent')}
               >
-                <UserPlus size={20} className="text-ink-600 group-hover:text-ink-900 transition-colors" />
+                <UserPlus size={20} className="text-ink-600 group-hover:text-text-primary transition-colors" />
                 Demo Ortu
               </button>
             </div>
@@ -212,7 +217,7 @@ function LoginForm() {
         </div>
 
         <p className="text-center mt-8 text-sm text-text-muted">
-          <Link href="/" className="font-semibold text-text-secondary hover:text-ink-900 transition-colors inline-flex items-center gap-1">
+          <Link href="/" className="font-semibold text-text-secondary hover:text-text-primary transition-colors inline-flex items-center gap-1">
             ← Kembali ke Beranda
           </Link>
         </p>

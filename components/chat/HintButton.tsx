@@ -29,7 +29,7 @@ export default function HintButton({ hintsUsed, onClick, disabled }: HintButtonP
       <LightbulbIcon size={16} className={hintsUsed === 0 ? "text-[#fbbf24]" : "text-[#f59e0b]"} />
       <span className="hidden sm:inline">Minta Petunjuk</span>
       <span className="sm:hidden">Hint</span>
-      <span className="bg-white/50 px-1.5 py-0.5 rounded text-[0.65rem] ml-1">{3 - hintsUsed}</span>
+      <span className="bg-surface/50 px-1.5 py-0.5 rounded text-[0.65rem] ml-1">{3 - hintsUsed}</span>
     </button>
   );
 }

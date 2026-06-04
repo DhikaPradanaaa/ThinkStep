@@ -16,7 +16,7 @@ interface BadgeCardProps {
 export default function BadgeCard({ badge, earned, earnedAt }: BadgeCardProps) {
   return (
     <div className={`
-      relative bg-white border-2 rounded-2xl p-4 flex flex-col items-center gap-2 text-center transition-transform hover:scale-105
+      relative bg-surface border-2 rounded-2xl p-4 flex flex-col items-center gap-2 text-center transition-transform hover:scale-105
       ${earned ? 'border-[#fcd34d] shadow-sm' : 'border-border grayscale'}
     `}>
       <div className={`
@@ -31,7 +31,7 @@ export default function BadgeCard({ badge, earned, earnedAt }: BadgeCardProps) {
       </div>
 
       {!earned && (
-        <div className="absolute inset-0 rounded-2xl bg-white/60 backdrop-grayscale" />
+        <div className="absolute inset-0 rounded-2xl bg-surface/60 backdrop-grayscale" />
       )}
       
       {earned && earnedAt && (

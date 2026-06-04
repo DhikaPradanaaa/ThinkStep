@@ -259,7 +259,7 @@ export default function ChatInterface({
         <div className="w-8 h-8 rounded-lg bg-surface-alt flex items-center justify-center mr-3 border border-border shadow-sm">
            <MessageSquareText size={16} className="text-ink-600" />
         </div>
-        <h1 className="text-base font-bold text-ink-900 tracking-tight truncate font-display">
+        <h1 className="text-base font-bold text-text-primary tracking-tight truncate font-display">
           Sesi Belajar: {question.topic}
         </h1>
       </div>
@@ -278,13 +278,13 @@ export default function ChatInterface({
               {diffLabel}
             </span>
           </div>
-          <button className="text-ink-400 hover:text-ink-900 transition-colors p-1 rounded-full hover:bg-surface border border-transparent hover:border-border">
+          <button className="text-ink-400 hover:text-text-primary transition-colors p-1 rounded-full hover:bg-surface border border-transparent hover:border-border">
             {isQuestionCollapsed ? <ChevronDown size={18} /> : <ChevronUp size={18} />}
           </button>
         </div>
         
         {!isQuestionCollapsed && (
-          <div className="px-5 py-4 text-sm md:text-base text-text-primary whitespace-pre-wrap leading-relaxed bg-white">
+          <div className="px-5 py-4 text-sm md:text-base text-text-primary whitespace-pre-wrap leading-relaxed bg-surface">
             {question.content}
           </div>
         )}
@@ -297,7 +297,7 @@ export default function ChatInterface({
             <div className="w-20 h-20 rounded-3xl bg-surface-alt border border-border flex items-center justify-center mb-6 shadow-sm">
               <BrainCircuit size={40} className="text-ink-300" />
             </div>
-            <p className="font-semibold text-ink-900 mb-1 font-display">Mulai diskusi dengan Lumina AI.</p>
+            <p className="font-semibold text-text-primary mb-1 font-display">Mulai diskusi dengan Lumina AI.</p>
             <p className="text-sm">Jelaskan apa yang sudah kamu pahami dari soal di atas.</p>
           </div>
         )}
@@ -334,7 +334,7 @@ export default function ChatInterface({
               onChange={handleInputChange}
               onKeyDown={handleKeyDown}
               placeholder="Tulis balasanmu di sini..."
-              className="input-base resize-none min-h-[52px] max-h-[160px] py-3.5 shadow-sm bg-white"
+              className="input-base resize-none min-h-[52px] max-h-[160px] py-3.5 shadow-sm bg-surface"
               disabled={isLoading && !isStreaming}
               rows={1}
             />
@@ -343,7 +343,7 @@ export default function ChatInterface({
           <button
             onClick={handleSendMessage}
             disabled={!inputValue.trim() || isLoading}
-            className="flex-shrink-0 bg-ink-900 hover:bg-black text-white p-3.5 rounded-xl shadow-md shadow-ink-900/10 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed mb-0.5"
+            className="flex-shrink-0 bg-brand-main hover:bg-brand-light text-brand-text p-3.5 rounded-xl shadow-md shadow-brand-main/10 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed mb-0.5"
           >
             <SendHorizonal size={22} />
           </button>
@@ -367,10 +367,10 @@ export default function ChatInterface({
       {/* Submit Modal */}
       {isSubmitModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-200">
+          <div className="bg-surface rounded-2xl shadow-xl w-full max-w-lg overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-200">
             <div className="px-6 py-4 border-b border-border flex justify-between items-center">
-              <h2 className="text-lg font-bold text-ink-900 font-display">Kumpulkan Jawaban Akhir</h2>
-              <button onClick={() => setIsSubmitModalOpen(false)} className="text-ink-400 hover:text-ink-900 transition-colors p-1 rounded-full hover:bg-surface">
+              <h2 className="text-lg font-bold text-text-primary font-display">Kumpulkan Jawaban Akhir</h2>
+              <button onClick={() => setIsSubmitModalOpen(false)} className="text-ink-400 hover:text-text-primary transition-colors p-1 rounded-full hover:bg-surface">
                 <X size={20} />
               </button>
             </div>
@@ -381,7 +381,7 @@ export default function ChatInterface({
               </p>
 
               <div className="space-y-1.5">
-                <label className="text-sm font-bold text-ink-900">Penjelasan / Jawaban Teks</label>
+                <label className="text-sm font-bold text-text-primary">Penjelasan / Jawaban Teks</label>
                 <textarea
                   value={finalAnswerText}
                   onChange={(e) => setFinalAnswerText(e.target.value)}
@@ -391,7 +391,7 @@ export default function ChatInterface({
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-sm font-bold text-ink-900">Upload Foto (Opsional)</label>
+                <label className="text-sm font-bold text-text-primary">Upload Foto (Opsional)</label>
                 <div className="border-2 border-dashed border-border/80 rounded-xl p-6 flex flex-col items-center justify-center bg-surface-alt/50 hover:bg-surface-alt transition-colors group cursor-pointer relative">
                   <input 
                     type="file" 
@@ -399,17 +399,17 @@ export default function ChatInterface({
                     onChange={(e) => setFinalAnswerFile(e.target.files?.[0] || null)}
                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                   />
-                  <div className="w-12 h-12 rounded-full bg-white border border-border flex items-center justify-center mb-3 shadow-sm group-hover:scale-105 transition-transform">
+                  <div className="w-12 h-12 rounded-full bg-surface border border-border flex items-center justify-center mb-3 shadow-sm group-hover:scale-105 transition-transform">
                     <Upload size={20} className="text-brand-main" />
                   </div>
                   {finalAnswerFile ? (
                     <div className="text-center">
-                      <p className="text-sm font-bold text-ink-900">{finalAnswerFile.name}</p>
+                      <p className="text-sm font-bold text-text-primary">{finalAnswerFile.name}</p>
                       <p className="text-xs text-text-muted mt-0.5">{(finalAnswerFile.size / 1024 / 1024).toFixed(2)} MB</p>
                     </div>
                   ) : (
                     <div className="text-center">
-                      <p className="text-sm font-semibold text-ink-900">Klik untuk upload foto</p>
+                      <p className="text-sm font-semibold text-text-primary">Klik untuk upload foto</p>
                       <p className="text-xs text-text-muted mt-0.5">Mendukung format JPG, PNG, WEBP</p>
                     </div>
                   )}

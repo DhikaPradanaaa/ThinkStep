@@ -62,7 +62,7 @@ export default function ResultsClient({ question, sessions }: { question: any, s
     <div className="card !p-0 overflow-hidden shadow-sm border-border">
       <div className="p-6 border-b border-border flex justify-between items-center bg-surface">
         <div>
-          <h2 className="text-heading-sm text-ink-900 mb-1">Rekap Nilai Siswa</h2>
+          <h2 className="text-heading-sm text-text-primary mb-1">Rekap Nilai Siswa</h2>
           <p className="text-sm text-text-muted">{localSessions.length} pengumpulan untuk tugas ini.</p>
         </div>
         <button onClick={exportCSV} className="btn-secondary flex items-center gap-2">
@@ -81,7 +81,7 @@ export default function ResultsClient({ question, sessions }: { question: any, s
               <th className="p-4 font-bold text-right">Aksi</th>
             </tr>
           </thead>
-          <tbody className="text-sm text-ink-900 divide-y divide-border">
+          <tbody className="text-sm text-text-primary divide-y divide-border">
             {localSessions.map(s => {
               const isEditing = editingId === s.id;
               const finalScore = s.teacherScore !== null ? s.teacherScore : s.aiScore;
@@ -119,7 +119,7 @@ export default function ResultsClient({ question, sessions }: { question: any, s
                   <td className="p-4 text-right">
                     {isEditing ? (
                       <div className="flex items-center justify-end gap-2">
-                        <button onClick={() => handleSave(s.id)} disabled={isSaving} className="p-1.5 bg-success-light text-success-dark rounded-md hover:bg-success-main hover:text-white transition-colors">
+                        <button onClick={() => handleSave(s.id)} disabled={isSaving} className="p-1.5 bg-success-light text-success-dark rounded-md hover:bg-success-main hover:text-brand-text transition-colors">
                           <Check size={16} />
                         </button>
                         <button onClick={() => setEditingId(null)} disabled={isSaving} className="p-1.5 bg-surface-alt text-text-muted rounded-md hover:bg-border transition-colors">

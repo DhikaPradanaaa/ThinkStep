@@ -53,7 +53,7 @@ export default function ExamTimer({
         <Clock size={18} aria-hidden="true" />
         <span>{formatTime(remainingMs)}</span>
       </div>
-      <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-white border border-rose-200">
+      <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-surface border border-rose-200">
         <div
           className={`exam-timer-bar h-full rounded-full ${isUrgent ? 'urgent' : ''}`}
           style={{ width: `${progress}%` }}

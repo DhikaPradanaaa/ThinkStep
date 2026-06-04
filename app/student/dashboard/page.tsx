@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { BADGES } from '@/lib/gamification/badges'
 import { getAutonomyLabel } from '@/lib/gamification/scoring'
 import JoinClassButton from '@/components/student/JoinClassButton'
+import MiniLeaderboardWidget from '@/components/gamification/MiniLeaderboardWidget'
 
 export default async function StudentDashboard() {
   const session = await auth()
@@ -181,7 +182,7 @@ export default async function StudentDashboard() {
                 const icons: Record<string, string> = { Matematika: '📐', IPA: '🔬', IPS: '🗺️', 'Bahasa Indonesia': '📖', 'Bahasa Inggris': '🌍' }
                 const pct = Math.round((s.done / s.total) * 100)
                 return (
-                  <div key={s.name} className="text-center p-2 rounded-xl bg-white/60 border border-white/40">
+                  <div key={s.name} className="text-center p-2 rounded-xl bg-surface/60 border border-white/40">
                     <p className="text-xl mb-1">{icons[s.name] ?? '📚'}</p>
                     <p className="text-xs font-semibold text-ink-800 leading-tight" style={{ fontSize: '0.65rem' }}>
                       {s.name.replace('Bahasa ', 'B. ')}
@@ -233,7 +234,7 @@ export default async function StudentDashboard() {
               <div className="w-full h-4 bg-ink-50/50 rounded-full overflow-hidden shadow-inner border border-ink-100">
                 <div className="h-full rounded-full transition-all duration-1000 ease-out relative overflow-hidden bg-gradient-to-r from-blue-500 to-emerald-400"
                      style={{ width: `${stats?.autonomyIndex ?? 0}%` }}>
-                  <div className="absolute inset-0 bg-white/20 animate-pulse" />
+                  <div className="absolute inset-0 bg-surface/20 animate-pulse" />
                 </div>
               </div>
             </div>
@@ -255,19 +256,19 @@ export default async function StudentDashboard() {
                 </button>
               </Link>
               <Link href="/student/tasks" className="block outline-none">
-                <button className="btn-secondary w-full p-4 text-left flex items-center justify-between hover-lift bg-white/60">
+                <button className="btn-secondary w-full p-4 text-left flex items-center justify-between hover-lift bg-surface/60">
                   <span className="flex items-center gap-2 text-base"><span className="text-xl">📋</span> Tugas Pribadi ({pendingTasks.length} pending)</span>
                   <span>→</span>
                 </button>
               </Link>
               <Link href="/student/assignments" className="block outline-none">
-                <button className="btn-secondary w-full p-4 text-left flex items-center justify-between hover-lift bg-white/60">
+                <button className="btn-secondary w-full p-4 text-left flex items-center justify-between hover-lift bg-surface/60">
                   <span className="flex items-center gap-2 text-base"><span className="text-xl">📝</span> Tugas Sekolah ({assignments.length})</span>
                   <span>→</span>
                 </button>
               </Link>
               <Link href="/student/profile" className="block outline-none">
-                <button className="btn-ghost w-full p-4 text-left flex items-center gap-2 text-base hover:bg-white/50">
+                <button className="btn-ghost w-full p-4 text-left flex items-center gap-2 text-base hover:bg-surface/50">
                   <span className="text-xl">🏆</span> Profil & Koleksi Badge
                 </button>
               </Link>
@@ -275,8 +276,13 @@ export default async function StudentDashboard() {
           </div>
         </div>
 
-        {/* Tugas Pribadi Widget */}
-        {pendingTasks.length > 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 slide-up" style={{ animationDelay: '250ms' }}>
+          {classIds.length > 0 && (
+            <MiniLeaderboardWidget classId={classIds[0]} currentUserId={userId} />
+          )}
+
+          {/* Tugas Pribadi Widget */}
+          {pendingTasks.length > 0 && (
           <div className="glass-card p-6 slide-up" style={{ animationDelay: '250ms' }}>
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-heading-sm">Tugas Perlu Dikerjakan 📋</h2>
@@ -288,10 +294,10 @@ export default async function StudentDashboard() {
                 const isOverdue = task.deadline && new Date(task.deadline) < new Date()
                 return (
                   <Link key={task.id} href="/student/tasks" className="block">
-                    <div className="flex items-center gap-3 p-3 bg-white/60 rounded-xl border border-white/40 shadow-sm hover:bg-white/80 transition-colors">
+                    <div className="flex items-center gap-3 p-3 bg-surface/60 rounded-xl border border-white/40 shadow-sm hover:bg-surface/80 transition-colors">
                       <span className="text-lg">{task.status === 'IN_PROGRESS' ? '⚡' : '⭕'}</span>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-semibold text-ink-900 truncate">{task.title}</p>
+                        <p className="text-sm font-semibold text-text-primary truncate">{task.title}</p>
                         {task.deadline && (
                           <p className={`text-xs font-medium mt-0.5 ${isOverdue ? 'text-red-600' : 'text-text-muted'}`}>
                             {isOverdue ? '⚠️ Terlambat · ' : '📅 '}
@@ -309,6 +315,7 @@ export default async function StudentDashboard() {
             </div>
           </div>
         )}
+        </div>
 
         {/* Recent Badges */}
         {recentBadges.length > 0 && (
@@ -334,7 +341,7 @@ export default async function StudentDashboard() {
             <h2 className="text-heading-sm mb-5">Riwayat Latihan Terakhir</h2>
             <div className="flex flex-col gap-3">
               {recentSessions.map((s) => (
-                <div key={s.id} className="flex items-center gap-4 p-4 bg-white/60 rounded-xl border border-white/40 shadow-sm hover:bg-white/80 transition-colors">
+                <div key={s.id} className="flex items-center gap-4 p-4 bg-surface/60 rounded-xl border border-white/40 shadow-sm hover:bg-surface/80 transition-colors">
                   <div className={`w-12 h-12 rounded-full flex items-center justify-center text-xl shadow-inner ${s.isCorrect ? 'bg-emerald-100' : s.isCompleted ? 'bg-rose-100' : 'bg-amber-100'}`}>
                     {s.isCorrect ? '✅' : s.isCompleted ? '❌' : '⏸️'}
                   </div>

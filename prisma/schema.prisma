@@ -21,6 +21,8 @@ model User {
   schoolId     String?
   school       School?  @relation(fields: [schoolId], references: [id])
   avatarColor  String   @default("#3B82F6")
+  resetToken       String?   @unique
+  resetTokenExpiry DateTime?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
@@ -34,6 +36,10 @@ model User {
   tasks                  Task[]
   taughtClasses          Class[]              @relation("TeacherClasses")
   joinedClasses          Class[]              @relation("StudentClasses")
+  
+  linkedChildren         ParentStudentLink[]  @relation("ParentLinks")
+  linkedParents          ParentStudentLink[]  @relation("StudentLinks")
+  notifications          Notification[]
 
   @@index([role])
   @@index([schoolId])
@@ -439,4 +445,49 @@ model DailyQuestionSet {
   @@index([date])
   @@index([gradeLevel])
   @@index([date, gradeLevel])
+}
+
+// ─────────────────────────────────────────
+// PARENT-STUDENT LINK
+// ─────────────────────────────────────────
+
+model ParentStudentLink {
+  id        String   @id @default(cuid())
+  parentId  String
+  parent    User     @relation("ParentLinks", fields: [parentId], references: [id])
+  studentId String
+  student   User     @relation("StudentLinks", fields: [studentId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@unique([parentId, studentId])
+  @@index([parentId])
+}
+
+// ─────────────────────────────────────────
+// NOTIFICATIONS
+// ─────────────────────────────────────────
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      NotificationType
+  title     String
+  message   String
+  href      String?
+  isRead    Boolean          @default(false)
+  createdAt DateTime         @default(now())
+
+  @@index([userId, isRead])
+  @@index([userId, createdAt])
+}
+
+enum NotificationType {
+  STREAK_WARNING
+  ASSIGNMENT_NEW
+  ASSIGNMENT_GRADED
+  EXAM_STARTING
+  BADGE_EARNED
+  SUBMISSION_RECEIVED
+  DAILY_REMINDER
 }
