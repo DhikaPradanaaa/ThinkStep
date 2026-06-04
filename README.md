@@ -49,6 +49,32 @@ Kami membawa ekosistem belajar yang komprehensif, tidak hanya untuk siswa, tapi 
 
 ---
 
+## 📸 Tampilan Antarmuka (Screenshots)
+
+Berikut adalah dokumentasi tampilan dari dalam aplikasi ThinkStep:
+
+**1. Dashboard Siswa (Beranda)**
+Menampilkan statistik belajar, poin, indeks kemandirian, dan streak belajar harian.
+<img src="./thinkstep-app/public/docs/dashboard.png" width="800" alt="Dashboard Siswa" />
+
+**2. Tanya Lumina (Chat AI Tutor)**
+Lumina AI menggunakan *Socratic Method* untuk membimbing siswa menjawab pertanyaan tanpa memberikan jawaban langsung.
+<img src="./thinkstep-app/public/docs/tanya-lumina.png" width="800" alt="Tanya Lumina AI" />
+
+**3. Latihan Soal AI**
+Latihan soal pilihan ganda dari berbagai mata pelajaran (Matematika, IPA, IPS, B. Inggris).
+<img src="./thinkstep-app/public/docs/latihan.png" width="800" alt="Latihan Soal" />
+
+**4. Manajemen Tugas Pribadi**
+Siswa dapat mencatat dan memonitor *progress* tugas-tugas personal mereka di luar tugas sekolah.
+<img src="./thinkstep-app/public/docs/tugas-pribadi.png" width="800" alt="Tugas Pribadi" />
+
+**5. Tugas Sekolah**
+Integrasi tugas resmi yang diberikan oleh guru pengajar langsung di dalam platform.
+<img src="./thinkstep-app/public/docs/tugas-sekolah.png" width="800" alt="Tugas Sekolah" />
+
+---
+
 ## 🚀 Cara Instalasi (Sangat Mudah!)
 
 Lupakan pengaturan database yang rumit, install dependency manual, atau konfigurasi AI yang bikin pusing. Kami telah merancang **Skrip Instalasi 1-Klik** agar siapapun (bahkan yang bukan programmer) bisa menjalankan ThinkStep di komputernya!
