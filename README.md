@@ -1,5 +1,4 @@
 <div align="center">
-  <img src="./thinkstep-app/public/logo-dark.png" alt="ThinkStep Logo" width="120" />
   <h1>ThinkStep — AI yang Membimbing, Bukan Sekadar Menjawab</h1>
   <p><em>Platform pendidikan berbasis AI modern yang dirancang khusus untuk memandu pemikiran analitis siswa sesuai standar Kurikulum Merdeka 2026.</em></p>
 </div>
@@ -80,5 +79,5 @@ Aplikasi ini tidak hanya cantik, tapi juga tahan banting! Telah melewati *Full S
 
 ---
 <div align="center">
-  <b>ThinkStep — Diciptakan oleh Dhika Pradana (CTO) untuk memajukan mutu pendidikan Indonesia.</b>
+  <b>ThinkStep — Diciptakan untuk memajukan mutu pendidikan Indonesia.</b>
 </div>
