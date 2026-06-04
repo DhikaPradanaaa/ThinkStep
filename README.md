@@ -50,36 +50,6 @@ Skrip ini secara otomatis akan:
 
 ---
 
-### Opsi 2: Instalasi Manual (Untuk Mode Online/Gemini)
-
-Jika kamu ingin menjalankan aplikasi secara manual atau menggunakan Gemini API untuk AI-nya:
-
-1. **Install dependency:**
-   ```bash
-   npm install
-   ```
-
-2. **Konfigurasi Environment:**
-   Buat file `.env` di folder `thinkstep-app` (bisa disalin dari `.env.example`) dan masukkan API key kamu:
-   ```env
-   DATABASE_URL="file:./dev.db"
-   NEXTAUTH_SECRET="secret-anda-disini"
-   NEXTAUTH_URL="http://localhost:3000"
-   GEMINI_API_KEY="api-key-gemini-anda"  # Jika menggunakan Gemini
-   ```
-
-3. **Inisialisasi Database (Prisma):**
-   ```bash
-   npx prisma generate
-   npx prisma db push
-   npx prisma db seed
-   ```
-
-4. **Jalankan Development Server:**
-   ```bash
-   npm run dev
-   ```
-
 Buka [http://localhost:3000](http://localhost:3000) di browser Anda untuk melihat hasilnya.
 
 ---
