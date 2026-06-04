@@ -23,41 +23,59 @@ ThinkStep adalah platform pembelajaran interaktif berbasis Artificial Intelligen
 - **AI Integration**: Gemini API & Ollama lokal
 - **Language**: TypeScript
 
-## 🚀 Cara Menjalankan Secara Lokal
+## 🚀 Cara Menjalankan Aplikasi
 
-1. **Clone repository ini:**
-   ```bash
-   git clone https://github.com/DhikaPradanaaa/ThinkStep.git
-   cd ThinkStep
-   cd thinkstep-app
-   ```
+Kami telah menyediakan skrip **Instalasi 1-Klik** untuk menjalankan aplikasi secara lokal dan offline (menggunakan AI Ollama secara lokal, tanpa kunci API tambahan). 
 
-2. **Install dependency:**
+### Opsi 1: Mode Offline (Instalasi 1-Klik Terotomatisasi) 🌟
+
+Pastikan kamu sudah mengunduh / melakukan `git clone` repositori ini:
+```bash
+git clone https://github.com/DhikaPradanaaa/ThinkStep.git
+cd ThinkStep/thinkstep-app
+```
+
+Bagi **pengguna Windows**:
+- Cukup **klik dua kali** (double click) pada file `install-offline.bat`.
+
+Bagi **pengguna macOS/Linux**:
+- Buka terminal di folder aplikasi dan jalankan: `bash install-offline.sh`
+
+Skrip ini secara otomatis akan:
+1. Menginstal semua library Node.js.
+2. Membuat file lingkungan (`.env`).
+3. Mengatur database dan mengisinya dengan data awal.
+4. Mengecek, mengunduh, dan menginstal AI Lokal (Ollama) beserta model ringan `Qwen 2.5 7B`.
+5. Menjalankan aplikasi secara otomatis.
+
+---
+
+### Opsi 2: Instalasi Manual (Untuk Mode Online/Gemini)
+
+Jika kamu ingin menjalankan aplikasi secara manual atau menggunakan Gemini API untuk AI-nya:
+
+1. **Install dependency:**
    ```bash
    npm install
    ```
 
-3. **Konfigurasi Environment:**
-   Buat file `.env` (atau `.env.local`) di folder `thinkstep-app` dan sesuaikan nilainya:
+2. **Konfigurasi Environment:**
+   Buat file `.env` di folder `thinkstep-app` (bisa disalin dari `.env.example`) dan masukkan API key kamu:
    ```env
    DATABASE_URL="file:./dev.db"
-   AUTH_SECRET="secret-anda-disini"
+   NEXTAUTH_SECRET="secret-anda-disini"
    NEXTAUTH_URL="http://localhost:3000"
-   GEMINI_API_KEY="api-key-gemini-anda"
-   OLLAMA_URL="http://127.0.0.1:11434"
+   GEMINI_API_KEY="api-key-gemini-anda"  # Jika menggunakan Gemini
    ```
 
-4. **Inisialisasi Database (Prisma):**
+3. **Inisialisasi Database (Prisma):**
    ```bash
    npx prisma generate
    npx prisma db push
-   ```
-   *(Opsional) Masukkan data awal:*
-   ```bash
    npx prisma db seed
    ```
 
-5. **Jalankan Development Server:**
+4. **Jalankan Development Server:**
    ```bash
    npm run dev
    ```

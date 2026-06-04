@@ -52,12 +52,15 @@ function LoginForm() {
     }
   }
 
-  function fillDemo(type: 'student' | 'teacher') {
+  function fillDemo(type: 'student' | 'teacher' | 'parent') {
     if (type === 'student') {
       setEmail('andi@thinkstep.demo')
       setPassword('demo123')
-    } else {
+    } else if (type === 'teacher') {
       setEmail('guru@thinkstep.demo')
+      setPassword('demo123')
+    } else {
+      setEmail('ortu@thinkstep.demo')
       setPassword('demo123')
     }
   }
@@ -173,11 +176,11 @@ function LoginForm() {
             <p className="text-[11px] font-bold text-text-muted mb-4 text-center uppercase tracking-widest">
               Coba Akun Demo
             </p>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-3 gap-2">
               <button
                 id="demo-student"
                 type="button"
-                className="btn-secondary py-2.5 px-3 flex-col gap-1 h-auto text-xs font-semibold hover:border-ink-400 group"
+                className="btn-secondary py-2.5 px-3 flex-col gap-1 h-auto text-[10px] font-semibold hover:border-ink-400 group"
                 onClick={() => fillDemo('student')}
               >
                 <GraduationCap size={20} className="text-ink-600 group-hover:text-ink-900 transition-colors" />
@@ -186,11 +189,20 @@ function LoginForm() {
               <button
                 id="demo-teacher"
                 type="button"
-                className="btn-secondary py-2.5 px-3 flex-col gap-1 h-auto text-xs font-semibold hover:border-ink-400 group"
+                className="btn-secondary py-2.5 px-3 flex-col gap-1 h-auto text-[10px] font-semibold hover:border-ink-400 group"
                 onClick={() => fillDemo('teacher')}
               >
                 <Presentation size={20} className="text-ink-600 group-hover:text-ink-900 transition-colors" />
                 Demo Guru
+              </button>
+              <button
+                id="demo-parent"
+                type="button"
+                className="btn-secondary py-2.5 px-3 flex-col gap-1 h-auto text-[10px] font-semibold hover:border-ink-400 group"
+                onClick={() => fillDemo('parent')}
+              >
+                <UserPlus size={20} className="text-ink-600 group-hover:text-ink-900 transition-colors" />
+                Demo Ortu
               </button>
             </div>
             <p className="text-xs font-medium text-text-muted text-center mt-4">

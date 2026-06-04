@@ -32,9 +32,36 @@ model User {
   teacherAssignments     Assignment[]         @relation("TeacherAssignments")
   studentWritingSessions WritingSession[]   @relation("StudentWritingSessions")
   tasks                  Task[]
+  taughtClasses          Class[]              @relation("TeacherClasses")
+  joinedClasses          Class[]              @relation("StudentClasses")
 
   @@index([role])
   @@index([schoolId])
+}
+
+// ─────────────────────────────────────────
+// CLASSES (Kelas)
+// ─────────────────────────────────────────
+
+model Class {
+  id          String   @id @default(cuid())
+  name        String
+  code        String   @unique // Kode 6 karakter untuk join (contoh: 8AX39B)
+  description String?
+  schoolId    String?
+  school      School?  @relation(fields: [schoolId], references: [id])
+  teacherId   String
+  teacher     User     @relation("TeacherClasses", fields: [teacherId], references: [id])
+  
+  students    User[]   @relation("StudentClasses")
+  exams       Exam[]
+  assignments Assignment[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([schoolId])
+  @@index([teacherId])
 }
 
 // ─────────────────────────────────────────
@@ -86,6 +113,7 @@ model School {
   users     User[]
   exams     Exam[]
   assignments Assignment[]
+  classes   Class[]
   createdAt DateTime @default(now())
 }
 
@@ -172,6 +200,8 @@ model Question {
   explanation         String
   tags                String       @default("[]")
   isPublic            Boolean      @default(true)
+  isHots              Boolean      @default(false)  // Higher Order Thinking Skills
+  isDailyGenerated    Boolean      @default(false)  // dibuat oleh AI cron harian
   createdById         String
   createdBy           User         @relation(fields: [createdById], references: [id])
   createdAt           DateTime     @default(now())
@@ -180,6 +210,7 @@ model Question {
 
   @@index([subject, gradeLevel])
   @@index([topic])
+  @@index([isDailyGenerated, createdAt])
 }
 
 enum QuestionType {
@@ -241,6 +272,8 @@ model Exam {
   isActive    Boolean       @default(false)
   questions   ExamQuestion[]
   results     ExamResult[]
+  classId     String?
+  class       Class?        @relation(fields: [classId], references: [id])
   createdAt   DateTime      @default(now())
 
   @@index([schoolId, isActive])
@@ -291,6 +324,8 @@ model Assignment {
   minWordCount    Int?
   allowAttachment Boolean         @default(true)
   isPublished     Boolean         @default(false)
+  classId         String?
+  class           Class?          @relation(fields: [classId], references: [id])
   writingSessions WritingSession[]
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
@@ -386,4 +421,22 @@ model WritingAnalysisReport {
   generatedAt       DateTime       @default(now())
 
   @@index([overallVerdict])
+}
+
+// ─────────────────────────────────────────
+// DAILY QUESTION SETS (Soal Harian AI)
+// ─────────────────────────────────────────
+
+model DailyQuestionSet {
+  id          String   @id @default(cuid())
+  date        String   // Format: "2026-06-04" (tanggal soal berlaku)
+  gradeLevel  String   // "Kelas 7", "Kelas 8", dst.
+  subject     String   // "Matematika", "IPA", dst.
+  questionIds String   @default("[]") // JSON array of Question IDs, urutan 1-5
+  generatedAt DateTime @default(now())
+
+  @@unique([date, gradeLevel, subject])
+  @@index([date])
+  @@index([gradeLevel])
+  @@index([date, gradeLevel])
 }

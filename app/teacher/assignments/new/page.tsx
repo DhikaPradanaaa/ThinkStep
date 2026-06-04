@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import AppLayout from '@/components/layout/AppLayout'
 import Link from 'next/link'
@@ -8,10 +8,18 @@ import Link from 'next/link'
 export default function NewAssignmentPage() {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [classes, setClasses] = useState<any[]>([])
+  
+  useEffect(() => {
+    fetch('/api/classes').then(res => res.json()).then(data => {
+      if (data.classes) setClasses(data.classes)
+    })
+  }, [])
   
   const [formData, setFormData] = useState({
     title: '',
     targetGrade: 'Kelas 8',
+    classId: '',
     instructions: '',
     minWordCount: '',
     maxDurationMins: '60',
@@ -90,6 +98,23 @@ export default function NewAssignmentPage() {
                   <option value="Kelas 9">Kelas 9</option>
                 </select>
               </div>
+              
+              <div>
+                <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, marginBottom: '0.5rem', color: 'var(--color-text-primary)' }}>
+                  Pilih Kelas (Opsional)
+                </label>
+                <select
+                  value={formData.classId}
+                  onChange={e => setFormData({ ...formData, classId: e.target.value })}
+                  className="input-field"
+                >
+                  <option value="">-- Semua Kelas (Global) --</option>
+                  {classes.map(c => (
+                    <option key={c.id} value={c.id}>{c.name}</option>
+                  ))}
+                </select>
+              </div>
+
               <div>
                 <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, marginBottom: '0.5rem', color: 'var(--color-text-primary)' }}>
                   Batas Waktu (Hari)

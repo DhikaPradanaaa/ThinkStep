@@ -83,6 +83,20 @@ async function main() {
   })
   console.log('✅ Students created:', andi.name, budi.name, citra.name)
 
+  const ortu = await prisma.user.upsert({
+    where: { email: 'ortu@thinkstep.demo' },
+    update: {},
+    create: {
+      email: 'ortu@thinkstep.demo',
+      name: 'Bapak Andi',
+      passwordHash,
+      role: 'PARENT',
+      schoolId: school.id,
+      avatarColor: '#F59E0B',
+    },
+  })
+  console.log('✅ Parent created:', ortu.name)
+
   // ─── UserStats ───────────────────────────────
   await prisma.userStats.upsert({
     where: { userId: andi.id },
@@ -534,10 +548,11 @@ Tuliskan sebuah esai tentang **dampak positif dan negatif media sosial pada kehi
 
   console.log('\n🎉 Database seeding selesai!')
   console.log('\nAkun demo:')
-  console.log('  👩‍🏫 Guru   : guru@thinkstep.demo  / demo123')
-  console.log('  👨‍🎓 Siswa 1: andi@thinkstep.demo  / demo123')
-  console.log('  👨‍🎓 Siswa 2: budi@thinkstep.demo  / demo123')
-  console.log('  👨‍🎓 Siswa 3: citra@thinkstep.demo / demo123')
+  console.log('  👩‍🏫 Guru     : guru@thinkstep.demo  / demo123')
+  console.log('  👨‍🎓 Siswa 1  : andi@thinkstep.demo  / demo123')
+  console.log('  👨‍🎓 Siswa 2  : budi@thinkstep.demo  / demo123')
+  console.log('  👨‍🎓 Siswa 3  : citra@thinkstep.demo / demo123')
+  console.log('  👨‍👩‍👧 Orang Tua: ortu@thinkstep.demo  / demo123')
 }
 
 main()

@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "seed": "npx tsx prisma/seed.ts"
+    "seed": "npx tsx prisma/seed.ts",
+    "setup:offline": "node -e \"const os=require('os');const p=require('child_process');if(os.platform()==='win32'){p.execSync('install-offline.bat',{stdio:'inherit'})}else{p.execSync('bash install-offline.sh',{stdio:'inherit'})}\""
   },
   "prisma": {
     "seed": "npx tsx prisma/seed.ts"
@@ -31,6 +32,7 @@
     "next": "16.2.6",
     "next-auth": "^5.0.0-beta.31",
     "next-pwa": "^5.6.0",
+    "nodemailer": "^7.0.13",
     "prisma": "^7.8.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
@@ -44,6 +46,7 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
+    "@types/nodemailer": "^8.0.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",

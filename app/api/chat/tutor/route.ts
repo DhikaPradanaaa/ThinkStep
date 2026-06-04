@@ -3,7 +3,6 @@ import { prisma } from '@/lib/db'
 import { NextResponse } from 'next/server'
 import { streamOllamaChat, checkOllamaAvailability, OllamaMessage } from '@/lib/ai/ollama-client'
 import { streamGeminiChat, GeminiMessage } from '@/lib/ai/gemini-client'
-import { buildSocraticSystemPrompt } from '@/lib/prompts/socratic'
 import { containsDirectAnswer } from '@/lib/ai/answer-guard'
 
 // Check internet connectivity by pinging a reliable endpoint
@@ -68,8 +67,7 @@ export async function POST(req: Request) {
     }
 
     const learningSession = await prisma.learningSession.findUnique({
-      where: { id: sessionId },
-      include: { question: true }
+      where: { id: sessionId }
     })
 
     if (!learningSession || learningSession.userId !== user.id) {
@@ -100,10 +98,17 @@ export async function POST(req: Request) {
     const customReadable = new ReadableStream({
       async start(controller) {
         try {
-          const question = learningSession.question
-          const systemPrompt = question
-            ? buildSocraticSystemPrompt(question.subject, question.gradeLevel, question.topic, question.content, question.correctAnswer)
-            : 'Kamu adalah tutor Lumina AI yang cerdas dan membantu siswa berpikir mandiri.'
+          const systemPrompt = `Kamu adalah Lumina AI, asisten tutor pintar dari platform ThinkStep. 
+Tugasmu adalah membantu siswa memahami suatu konsep atau menyelesaikan masalah dengan metode Sokrates (membimbing dengan pertanyaan, bukan memberi jawaban langsung).
+
+ATURAN SANGAT PENTING (MUTLAK):
+1. DILARANG KERAS memberikan jawaban akhir langsung atau kesimpulan untuk MATA PELAJARAN APAPUN (Matematika, Biologi, Sejarah, Geografi, dll). Kamu harus memancing siswa untuk mengingat atau berpikir kritis.
+2. DILARANG PERNAH membuatkan kalimat, paragraf, esai, atau ringkasan secara utuh untuk siswa.
+3. PENGECUALIAN RUMUS: Jika siswa secara eksplisit meminta RUMUS (contoh: "Apa rumus energi kinetik?"), BERIKAN RUMUS TERSEBUT secara langsung, tetapi JANGAN menghitungkan angka/soalnya.
+4. Selalu tanyakan kembali pemahaman siswa atau bimbing mereka ke langkah selanjutnya.
+5. Gunakan gaya bahasa yang ramah, santai, dan memotivasi. Sapa siswa dengan baik jika ini awal percakapan.
+6. Gunakan Markdown untuk format teks.
+7. Jika siswa bertanya hal di luar pendidikan, arahkan kembali ke topik pembelajaran secara sopan.`
 
           const ollamaMessages: OllamaMessage[] = [
             { role: 'system', content: systemPrompt },
@@ -220,7 +225,7 @@ export async function POST(req: Request) {
             handleChunk,
             handleComplete,
             (error: Error) => {
-              if (!isControllerClosed) controller.error(error)
+              try { controller.error(error) } catch (_) {}
             }
           )
           // NOTE: Do NOT save or close here — handleComplete already did it

@@ -236,8 +236,13 @@ export default function ChatInterface({
         const errText = await response.text();
         throw new Error(errText || 'Gagal mengirim jawaban');
       }
+
+      const data = await response.json();
+      const newBadgesParam = data.newBadges?.length > 0
+        ? `&newBadges=${data.newBadges.join(',')}`
+        : '';
       
-      router.push(`/student/study/${question.id}/result?session=${sessionId}`);
+      router.push(`/student/study/${question.id}/result?session=${sessionId}${newBadgesParam}`);
     } catch (error: any) {
       console.error(error);
       alert(`Terjadi kesalahan: ${error?.message || 'Gagal mengirim'}`);

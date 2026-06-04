@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
   if (user.role !== 'TEACHER') return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
   const body = await req.json()
-  const { title, instructions, targetGrade, minWordCount, maxDurationMins, deadlineDays } = body
+  const { title, instructions, targetGrade, minWordCount, maxDurationMins, deadlineDays, classId } = body
 
   if (!title || !instructions || !targetGrade) {
     return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
@@ -30,6 +30,7 @@ export async function POST(req: NextRequest) {
         deadline,
         isPublished: true,
         schoolId: user.schoolId || 'no-school',
+        classId: classId || null,
         createdById: user.id,
       },
     })

@@ -20,8 +20,16 @@ export default function ExamCreateForm({ questions, teacherName }: ExamCreateFor
   const [title, setTitle] = useState('')
   const [durationMins, setDurationMins] = useState(60)
   const [targetGrade, setTargetGrade] = useState('')
+  const [classId, setClassId] = useState('')
+  const [classes, setClasses] = useState<any[]>([])
   const [selectedQuestions, setSelectedQuestions] = useState<string[]>([])
   const [filterSubject, setFilterSubject] = useState('Semua')
+
+  useEffect(() => {
+    fetch('/api/classes').then(res => res.json()).then(data => {
+      if (data.classes) setClasses(data.classes)
+    })
+  }, [])
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
@@ -52,7 +60,7 @@ export default function ExamCreateForm({ questions, teacherName }: ExamCreateFor
       const res = await fetch('/api/exam/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, durationMins, targetGrade, questionIds: selectedQuestions }),
+        body: JSON.stringify({ title, durationMins, targetGrade, questionIds: selectedQuestions, classId }),
       })
 
       if (!res.ok) {
@@ -127,6 +135,21 @@ export default function ExamCreateForm({ questions, teacherName }: ExamCreateFor
                     {grades.map(g => <option key={g} value={g}>{g}</option>)}
                     <option value="Kelas 8A">Kelas 8A</option>
                     <option value="Kelas 8B">Kelas 8B</option>
+                  </select>
+                </div>
+                
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--color-text-secondary)', marginBottom: '6px' }}>
+                    Pilih Kelas (Opsional)
+                  </label>
+                  <select
+                    value={classId}
+                    onChange={e => setClassId(e.target.value)}
+                    className="input-base"
+                    style={{ cursor: 'pointer' }}
+                  >
+                    <option value="">-- Semua Kelas (Global) --</option>
+                    {classes.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                   </select>
                 </div>
 

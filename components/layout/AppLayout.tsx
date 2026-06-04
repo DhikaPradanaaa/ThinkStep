@@ -8,7 +8,7 @@ import { syncOfflineMessages } from '@/lib/offline/message-queue'
 import { 
   Home, BookOpen, PenSquare, Award, 
   LayoutDashboard, Users, Library, ClipboardList, FileText,
-  LogOut, Menu, X, Brain, Wifi, WifiOff, ListTodo
+  LogOut, Menu, X, Brain, Wifi, WifiOff, ListTodo, Presentation, MessageCircle
 } from 'lucide-react'
 
 interface NavItem {
@@ -20,6 +20,7 @@ interface NavItem {
 const studentNav: NavItem[] = [
   { href: '/student/dashboard', label: 'Beranda', icon: Home },
   { href: '/student/study', label: 'Belajar', icon: BookOpen },
+  { href: '/student/chat', label: 'Tanya Lumina', icon: MessageCircle },
   { href: '/student/tasks', label: 'Tugas Pribadi', icon: ListTodo },
   { href: '/student/assignments', label: 'Tugas Sekolah', icon: PenSquare },
   { href: '/student/profile', label: 'Profil', icon: Award },
@@ -28,6 +29,7 @@ const studentNav: NavItem[] = [
 
 const teacherNav: NavItem[] = [
   { href: '/teacher/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/teacher/classes', label: 'Kelas', icon: Presentation },
   { href: '/teacher/students', label: 'Siswa', icon: Users },
   { href: '/teacher/question-bank', label: 'Bank Soal', icon: Library },
   { href: '/teacher/assignments', label: 'Tugas', icon: FileText },

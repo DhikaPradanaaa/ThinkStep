@@ -6,6 +6,7 @@ import OverviewCards from '@/components/teacher/OverviewCards'
 import HintDistributionChart from '@/components/teacher/HintDistributionChart'
 import TopicHeatmap from '@/components/teacher/TopicHeatmap'
 import StudentTable from '@/components/teacher/StudentTable'
+import GenerateDailyQuestionsButton from '@/components/teacher/GenerateDailyQuestionsButton'
 import Link from 'next/link'
 
 export const dynamic = 'force-dynamic'
@@ -98,7 +99,8 @@ export default async function TeacherDashboardPage() {
             </p>
           </div>
 
-          <div style={{ display: 'flex', gap: '0.75rem' }}>
+          <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', alignItems: 'flex-start' }}>
+            <GenerateDailyQuestionsButton />
             <Link href="/teacher/exam/new">
               <button className="btn-secondary" style={{ fontSize: '0.8rem' }}>
                 📋 Buat Ujian

@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
   if (user.role !== 'TEACHER') return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
   const body = await req.json()
-  const { title, durationMins, targetGrade, questionIds } = body
+  const { title, durationMins, targetGrade, questionIds, classId } = body
 
   if (!title?.trim()) return NextResponse.json({ error: 'Judul ujian harus diisi' }, { status: 400 })
   if (!targetGrade) return NextResponse.json({ error: 'Kelas target harus dipilih' }, { status: 400 })
@@ -23,6 +23,7 @@ export async function POST(req: NextRequest) {
         durationMins: durationMins || 60,
         targetGrade,
         schoolId: user.schoolId || 'no-school',
+        classId: classId || null,
         createdById: user.id,
         isActive: true,
         questions: {

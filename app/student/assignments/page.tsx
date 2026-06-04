@@ -66,8 +66,20 @@ export default async function StudentAssignmentsPage() {
 
   let assignments = DEMO_ASSIGNMENTS
   try {
+    const userWithClasses = await prisma.user.findUnique({
+      where: { id: user.id },
+      include: { joinedClasses: { select: { id: true } } }
+    })
+    const classIds = userWithClasses?.joinedClasses.map(c => c.id) || []
+
     const dbAssignments = await prisma.assignment.findMany({
-      where: { targetGrade: user.gradeLevel, isPublished: true },
+      where: { 
+        isPublished: true, 
+        OR: [
+          { classId: { in: classIds } },
+          { classId: null, targetGrade: user.gradeLevel ?? 'Kelas 8' }
+        ]
+      },
       include: {
         createdBy: { select: { name: true } },
         writingSessions: { where: { studentId: user.id }, take: 1 },

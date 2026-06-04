@@ -5,6 +5,7 @@ import AppLayout from '@/components/layout/AppLayout'
 import Link from 'next/link'
 import { BADGES } from '@/lib/gamification/badges'
 import { getAutonomyLabel } from '@/lib/gamification/scoring'
+import JoinClassButton from '@/components/student/JoinClassButton'
 
 export default async function StudentDashboard() {
   const session = await auth()
@@ -16,6 +17,12 @@ export default async function StudentDashboard() {
   const schoolId = (session.user as any).schoolId as string | null
   const gradeLevel = (session.user as any).gradeLevel as string | null
 
+  const userWithClasses = await prisma.user.findUnique({
+    where: { id: userId },
+    include: { joinedClasses: { select: { id: true } } }
+  })
+  const classIds = userWithClasses?.joinedClasses.map(c => c.id) || []
+
   const [stats, badges, recentSessions, assignments, activeExam, pendingTasks] = await Promise.all([
     prisma.userStats.findUnique({ where: { userId } }),
     prisma.userBadge.findMany({ where: { userId }, orderBy: { earnedAt: 'desc' }, take: 5 }),
@@ -26,7 +33,13 @@ export default async function StudentDashboard() {
       include: { question: true },
     }),
     prisma.assignment.findMany({
-      where: { isPublished: true, targetGrade: gradeLevel ?? 'Kelas 8' },
+      where: { 
+        isPublished: true, 
+        OR: [
+          { classId: { in: classIds } },
+          { classId: null, targetGrade: gradeLevel ?? 'Kelas 8' }
+        ]
+      },
       orderBy: { deadline: 'asc' },
       take: 3,
     }),
@@ -35,9 +48,12 @@ export default async function StudentDashboard() {
       ? prisma.exam.findFirst({
           where: {
             schoolId,
-            targetGrade: gradeLevel ?? 'Kelas 8',
             isActive: true,
             OR: [
+              { classId: { in: classIds } },
+              { classId: null, targetGrade: gradeLevel ?? 'Kelas 8' }
+            ],
+            AND: [
               { endsAt: null },
               { endsAt: { gt: new Date() } },
             ],
@@ -53,6 +69,36 @@ export default async function StudentDashboard() {
     }),
   ])
 
+  // Soal Harian: hitung progress hari ini
+  const today = new Date().toISOString().split('T')[0]
+  let dailyProgress = { total: 0, done: 0, subjects: [] as { name: string; done: number; total: number }[] }
+
+  if (gradeLevel) {
+    const dailySets = await prisma.dailyQuestionSet.findMany({
+      where: { date: today, gradeLevel },
+    })
+
+    if (dailySets.length > 0) {
+      const todayStart = new Date(today)
+      const doneSessions = await prisma.learningSession.findMany({
+        where: { userId, isCompleted: true, startedAt: { gte: todayStart } },
+        select: { questionId: true },
+      })
+      const doneSet = new Set(doneSessions.map(s => s.questionId).filter(Boolean))
+
+      let totalQ = 0, doneQ = 0
+      const subjects: typeof dailyProgress.subjects = []
+      for (const set of dailySets) {
+        const ids: string[] = JSON.parse(set.questionIds)
+        const doneInSet = ids.filter(id => doneSet.has(id)).length
+        totalQ += ids.length
+        doneQ += doneInSet
+        subjects.push({ name: set.subject, done: doneInSet, total: ids.length })
+      }
+      dailyProgress = { total: totalQ, done: doneQ, subjects }
+    }
+  }
+
 
   const autonomy = getAutonomyLabel(stats?.autonomyIndex ?? 0)
   const recentBadges = badges.map(b => ({
@@ -67,13 +113,18 @@ export default async function StudentDashboard() {
       
       <div className="p-8 max-w-6xl mx-auto space-y-8">
         {/* Header */}
-        <div className="space-y-2 fade-in">
-          <h1 className="text-display-md text-gradient text-gradient-primary">
-            Halo, {session.user.name?.split(' ')[0]}! 👋
-          </h1>
-          <p className="text-body-lg text-text-secondary font-medium">
-            {new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
-          </p>
+        <div className="flex justify-between items-start fade-in">
+          <div className="space-y-2">
+            <h1 className="text-display-md text-gradient text-gradient-primary">
+              Halo, {session.user.name?.split(' ')[0]}! 👋
+            </h1>
+            <p className="text-body-lg text-text-secondary font-medium">
+              {new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+            </p>
+          </div>
+          <div>
+            <JoinClassButton />
+          </div>
         </div>
 
         {/* Stats Grid */}
@@ -97,6 +148,59 @@ export default async function StudentDashboard() {
             </div>
           ))}
         </div>
+
+        {/* Daily Questions Progress Widget */}
+        {dailyProgress.total > 0 && (
+          <div className="glass-card p-6 slide-up" style={{ animationDelay: '150ms' }}>
+            <div className="flex justify-between items-center mb-4">
+              <div>
+                <h2 className="text-heading-sm">🌟 Soal Harian Hari Ini</h2>
+                <p className="text-xs text-text-muted mt-0.5">
+                  {dailyProgress.done} dari {dailyProgress.total} soal selesai
+                </p>
+              </div>
+              <Link href="/student/study" className="text-sm font-semibold text-ink-600 hover:text-ink-700">
+                Kerjakan →
+              </Link>
+            </div>
+
+            {/* Overall progress bar */}
+            <div className="w-full h-3 bg-ink-50/50 rounded-full overflow-hidden shadow-inner border border-ink-100 mb-4">
+              <div
+                className="h-full rounded-full transition-all duration-700 ease-out"
+                style={{
+                  width: `${dailyProgress.total > 0 ? Math.round((dailyProgress.done / dailyProgress.total) * 100) : 0}%`,
+                  background: 'linear-gradient(90deg, #6366f1, #8b5cf6)',
+                }}
+              />
+            </div>
+
+            {/* Per-subject mini progress */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
+              {dailyProgress.subjects.map(s => {
+                const icons: Record<string, string> = { Matematika: '📐', IPA: '🔬', IPS: '🗺️', 'Bahasa Indonesia': '📖', 'Bahasa Inggris': '🌍' }
+                const pct = Math.round((s.done / s.total) * 100)
+                return (
+                  <div key={s.name} className="text-center p-2 rounded-xl bg-white/60 border border-white/40">
+                    <p className="text-xl mb-1">{icons[s.name] ?? '📚'}</p>
+                    <p className="text-xs font-semibold text-ink-800 leading-tight" style={{ fontSize: '0.65rem' }}>
+                      {s.name.replace('Bahasa ', 'B. ')}
+                    </p>
+                    <p className="text-xs font-bold mt-1" style={{ color: s.done === s.total ? '#16A34A' : '#6366f1' }}>
+                      {s.done}/{s.total}
+                    </p>
+                  </div>
+                )
+              })}
+            </div>
+
+            {dailyProgress.done === dailyProgress.total && (
+              <div className="mt-4 text-center p-3 bg-green-50 rounded-xl border border-green-200">
+                <p className="text-sm font-bold text-green-800">🎉 Semua soal harian selesai! Keren banget!</p>
+              </div>
+            )}
+          </div>
+        )}
 
         {activeExam && (
           <div className="rounded-2xl border border-danger-main bg-danger-light p-5 shadow-sm slide-up">
