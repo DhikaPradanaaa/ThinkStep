@@ -32,7 +32,7 @@ export async function GET(request: Request) {
         where: { id: user.id },
         include: { joinedClasses: { select: { id: true } } }
       })
-      const classIds = userWithClasses?.joinedClasses.map(c => c.id) || []
+      const classIds = userWithClasses?.joinedClasses.map((c: any) => c.id) || []
 
       const assignments = await prisma.assignment.findMany({
         where: {
