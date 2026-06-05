@@ -317,12 +317,12 @@ Kembalikan format JSON murni TANPA markdown block, dengan struktur persis sepert
       where: { userId: user.id },
       select: { badgeId: true },
     });
-    const alreadyEarnedSet = new Set(alreadyEarned.map((b) => b.badgeId));
-    const newBadges = candidateBadges.filter((bid) => !alreadyEarnedSet.has(bid));
+    const alreadyEarnedSet = new Set(alreadyEarned.map((b: any) => b.badgeId));
+    const newBadges = candidateBadges.filter((bid: any) => !alreadyEarnedSet.has(bid));
 
     if (newBadges.length > 0) {
       await Promise.all(
-        newBadges.map((badgeId) =>
+        newBadges.map((badgeId: any) =>
           prisma.userBadge.upsert({
             where: { userId_badgeId: { userId: user.id, badgeId } },
             create: { userId: user.id, badgeId },
