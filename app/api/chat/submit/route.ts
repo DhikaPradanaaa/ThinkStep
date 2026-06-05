@@ -33,9 +33,9 @@ export async function POST(req: Request) {
     }
 
     // ─── Handle file upload ────────────────────────────────────
-    let fileUrl = null;
-    let mimeType = null;
-    let base64Data = null;
+    let fileUrl: string | null = null;
+    let mimeType: string | null = null;
+    let base64Data: string | null = null;
 
     if (file) {
       // SECURITY: Enforce max file size (5MB)
