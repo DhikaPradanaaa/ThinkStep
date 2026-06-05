@@ -45,7 +45,7 @@ export async function GET(request: Request) {
         }
       })
 
-      assignments.forEach(a => {
+      assignments.forEach((a: any) => {
         events.push({
           id: `assignment-${a.id}`,
           date: a.deadline.toISOString().split('T')[0],
@@ -69,7 +69,7 @@ export async function GET(request: Request) {
         }
       })
 
-      exams.forEach(e => {
+      exams.forEach((e: any) => {
         if (e.startsAt) {
           events.push({
             id: `exam-${e.id}`,
@@ -92,7 +92,7 @@ export async function GET(request: Request) {
         }
       })
 
-      tasks.forEach(t => {
+      tasks.forEach((t: any) => {
         if (t.deadline) {
           events.push({
             id: `task-${t.id}`,
@@ -112,7 +112,7 @@ export async function GET(request: Request) {
         where: { createdById: user.id, deadline: { gte: startDate, lt: endDate } }
       })
 
-      assignments.forEach(a => {
+      assignments.forEach((a: any) => {
         events.push({
           id: `assignment-${a.id}`,
           date: a.deadline.toISOString().split('T')[0],
@@ -127,7 +127,7 @@ export async function GET(request: Request) {
         where: { createdById: user.id, startsAt: { gte: startDate, lt: endDate } }
       })
 
-      exams.forEach(e => {
+      exams.forEach((e: any) => {
         if (e.startsAt) {
           events.push({
             id: `exam-${e.id}`,
