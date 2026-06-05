@@ -1,9 +1,7 @@
 import { PrismaClient } from '@prisma/client'
 import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3'
 import { PrismaLibSql } from '@prisma/adapter-libsql'
-import { createClient } from '@libsql/client'
 import path from 'path'
-import Database from 'better-sqlite3'
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined
@@ -15,11 +13,10 @@ function createPrismaClient() {
 
   // 1. Jika ada kredensial Turso, gunakan Turso (untuk Vercel/Produksi)
   if (process.env.TURSO_DATABASE_URL && process.env.TURSO_AUTH_TOKEN) {
-    const libsql = createClient({
+    const adapter = new PrismaLibSql({
       url: process.env.TURSO_DATABASE_URL,
       authToken: process.env.TURSO_AUTH_TOKEN,
     })
-    const adapter = new PrismaLibSql(libsql as any)
     return new PrismaClient({
       adapter,
       log: logOptions,
@@ -28,8 +25,9 @@ function createPrismaClient() {
 
   // 2. Jika tidak ada kredensial Turso, gunakan SQLite lokal (untuk Development)
   const dbPath = path.join(process.cwd(), 'prisma', 'dev.db')
-  const sqlite = new Database(dbPath)
-  const adapter = new PrismaBetterSqlite3(sqlite as any)
+  const adapter = new PrismaBetterSqlite3({
+    url: `file:${dbPath}`
+  })
   
   return new PrismaClient({
     adapter,
