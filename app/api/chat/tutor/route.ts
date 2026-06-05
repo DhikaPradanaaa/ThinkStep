@@ -112,13 +112,13 @@ ATURAN SANGAT PENTING (MUTLAK):
 
           const ollamaMessages: OllamaMessage[] = [
             { role: 'system', content: systemPrompt },
-            ...previousMessages.map(m => ({
+            ...previousMessages.map((m: any) => ({
               role: m.role === 'USER' ? 'user' as const : 'assistant' as const,
               content: m.content,
             })),
           ]
           
-          const geminiMessages: GeminiMessage[] = previousMessages.map(m => ({
+          const geminiMessages: GeminiMessage[] = previousMessages.map((m: any) => ({
             role: m.role === 'USER' ? 'user' as const : 'model' as const,
             content: m.content,
           }))
