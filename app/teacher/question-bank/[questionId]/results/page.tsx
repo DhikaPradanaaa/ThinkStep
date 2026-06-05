@@ -8,7 +8,8 @@ import ResultsClient from './ResultsClient';
 
 export const dynamic = 'force-dynamic';
 
-export default async function TeacherQuestionResultsPage({ params }: { params: { questionId: string } }) {
+export default async function TeacherQuestionResultsPage({ params }: { params: Promise<{ questionId: string }> }) {
+  const resolvedParams = await params;
   const session = await auth();
   if (!session?.user) redirect('/login');
   
@@ -16,7 +17,7 @@ export default async function TeacherQuestionResultsPage({ params }: { params: {
   if (user.role !== 'TEACHER') redirect('/student/dashboard');
 
   const question = await prisma.question.findUnique({
-    where: { id: params.questionId }
+    where: { id: resolvedParams.questionId }
   });
 
   if (!question) redirect('/teacher/question-bank');
@@ -24,7 +25,7 @@ export default async function TeacherQuestionResultsPage({ params }: { params: {
   // Fetch all completed learning sessions for this question
   const sessions = await prisma.learningSession.findMany({
     where: { 
-      questionId: params.questionId,
+      questionId: resolvedParams.questionId,
       isCompleted: true 
     },
     include: {
