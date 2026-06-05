@@ -19,7 +19,7 @@ function createPrismaClient() {
       url: process.env.TURSO_DATABASE_URL,
       authToken: process.env.TURSO_AUTH_TOKEN,
     })
-    const adapter = new PrismaLibSql(libsql)
+    const adapter = new PrismaLibSql(libsql as any)
     return new PrismaClient({
       adapter,
       log: logOptions,
@@ -29,7 +29,7 @@ function createPrismaClient() {
   // 2. Jika tidak ada kredensial Turso, gunakan SQLite lokal (untuk Development)
   const dbPath = path.join(process.cwd(), 'prisma', 'dev.db')
   const sqlite = new Database(dbPath)
-  const adapter = new PrismaBetterSqlite3(sqlite)
+  const adapter = new PrismaBetterSqlite3(sqlite as any)
   
   return new PrismaClient({
     adapter,

@@ -6,6 +6,8 @@ import { streamGeminiChat, GeminiMessage } from '@/lib/ai/gemini-client'
 import { buildSocraticSystemPrompt } from '@/lib/prompts/socratic'
 import { containsDirectAnswer } from '@/lib/ai/answer-guard'
 
+const hasGemini = !!process.env.GEMINI_API_KEY;
+
 // Check internet connectivity by pinging a reliable endpoint
 async function checkInternetConnectivity(): Promise<boolean> {
   try {
