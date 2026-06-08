@@ -119,9 +119,15 @@ export async function GET(request: Request) {
           savedIds.push(saved.id);
         }
 
-        // Simpan DailyQuestionSet
-        await prisma.dailyQuestionSet.create({
-          data: {
+        // Simpan DailyQuestionSet menggunakan upsert untuk menghindari error race condition
+        await prisma.dailyQuestionSet.upsert({
+          where: {
+            date_gradeLevel_subject: { date: today, gradeLevel, subject },
+          },
+          update: {
+            questionIds: JSON.stringify(savedIds),
+          },
+          create: {
             date: today,
             gradeLevel,
             subject,
