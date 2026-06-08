@@ -15,6 +15,10 @@ export default async function TeacherDashboardPage() {
   const session = await auth()
   if (!session?.user) redirect('/login')
 
+  if ((session.user as any).onboardingCompleted === false) {
+    redirect('/onboarding')
+  }
+
   const user = session.user as any
   if (user.role !== 'TEACHER') redirect('/student/dashboard')
 
@@ -76,10 +80,10 @@ export default async function TeacherDashboardPage() {
     console.error('DB error, using demo data:', error)
   }
 
-  const activeStudents = students.filter(s => s.totalSessions > 0).length || 32
-  const avgHints = sessions30Days > 0 ? Math.round((totalHints / sessions30Days) * 10) / 10 : 1.8
-  const noHintPercent = sessions30Days > 0 ? Math.round((noHintSessions / sessions30Days) * 100) : 78
-  const needsHelp = students.filter(s => s.needsHelp).length || 12
+  const activeStudents = students.filter(s => s.totalSessions > 0).length
+  const avgHints = sessions30Days > 0 ? Math.round((totalHints / sessions30Days) * 10) / 10 : 0
+  const noHintPercent = sessions30Days > 0 ? Math.round((noHintSessions / sessions30Days) * 100) : 0
+  const needsHelp = students.filter(s => s.needsHelp).length
 
   const avatarColor = '#059669'
   const userName = user.name || 'Guru'
@@ -149,7 +153,7 @@ export default async function TeacherDashboardPage() {
         </div>
 
         {/* Student Table */}
-        <StudentTable students={students.length > 0 ? students : undefined} />
+        <StudentTable students={students} />
       </div>
     </AppLayout>
   )

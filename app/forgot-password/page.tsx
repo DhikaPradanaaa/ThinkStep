@@ -46,8 +46,7 @@ export default function ForgotPasswordPage() {
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex flex-col items-center gap-3 justify-center mb-3 group hover:opacity-90 transition-opacity">
             <div className="w-14 h-14 rounded-2xl bg-white dark:bg-ink-900 shadow-md flex items-center justify-center mb-2 overflow-hidden relative">
-              <Image src="/logo-light.png" alt="ThinkStep Logo" fill className="object-cover dark:hidden" />
-              <Image src="/logo-dark.png" alt="ThinkStep Logo" fill className="object-cover hidden dark:block" />
+              <Image src="/logo-baru.png" alt="ThinkStep Logo" fill className="object-cover dark:invert" />
             </div>
             <span className="font-bold text-2xl text-text-primary tracking-tight font-display">
               ThinkStep

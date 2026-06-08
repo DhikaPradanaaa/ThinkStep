@@ -168,8 +168,7 @@ export default function AppLayout({ children, role, userName = 'Pengguna', avata
         <div className="flex items-center justify-between p-6">
           <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity" onClick={() => setIsMobileMenuOpen(false)}>
             <div className="w-10 h-10 rounded-xl bg-white dark:bg-ink-900 flex items-center justify-center shadow-md overflow-hidden relative">
-              <Image src="/logo-light.png" alt="ThinkStep Logo" fill className="object-cover dark:hidden" />
-              <Image src="/logo-dark.png" alt="ThinkStep Logo" fill className="object-cover hidden dark:block" />
+              <Image src="/logo-baru.png" alt="ThinkStep Logo" fill className="object-cover dark:invert" />
             </div>
             <span className="font-bold text-xl tracking-tight text-text-primary font-display">
               ThinkStep

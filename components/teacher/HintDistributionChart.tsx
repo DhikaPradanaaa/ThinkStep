@@ -13,15 +13,15 @@ interface HintDistributionChartProps {
 }
 
 const DEFAULT_DATA: HintData[] = [
-  { label: 'Tanpa Hint', count: 78, color: '#10B981' },
-  { label: '1 Hint', count: 45, color: '#3B82F6' },
-  { label: '2 Hint', count: 28, color: '#F59E0B' },
-  { label: '3 Hint', count: 12, color: '#F43F5E' },
+  { label: 'Tanpa Hint', count: 0, color: '#10B981' },
+  { label: '1 Hint', count: 0, color: '#3B82F6' },
+  { label: '2 Hint', count: 0, color: '#F59E0B' },
+  { label: '3 Hint', count: 0, color: '#F43F5E' },
 ]
 
 export default function HintDistributionChart({ data = DEFAULT_DATA }: HintDistributionChartProps) {
-  const maxCount = Math.max(...data.map(d => d.count))
-  const total = data.reduce((sum, d) => sum + d.count, 0)
+  const maxCount = Math.max(...data.map(d => d.count)) || 1
+  const total = data.reduce((sum, d) => sum + d.count, 0) || 0
 
   return (
     <div className="card" style={{ padding: '1.5rem', height: '100%' }}>
@@ -48,7 +48,7 @@ export default function HintDistributionChart({ data = DEFAULT_DATA }: HintDistr
       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
         {data.map((item) => {
           const barWidth = (item.count / maxCount) * 100
-          const percent = Math.round((item.count / total) * 100)
+          const percent = total > 0 ? Math.round((item.count / total) * 100) : 0
 
           return (
             <div key={item.label}>
@@ -104,7 +104,7 @@ export default function HintDistributionChart({ data = DEFAULT_DATA }: HintDistr
           <span style={{ fontSize: '1.25rem' }}>🎯</span>
           <span style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>
             <strong style={{ color: 'var(--color-success-dark)' }}>
-              {Math.round((data[0]?.count || 0) / total * 100)}%
+              {total > 0 ? Math.round((data[0]?.count || 0) / total * 100) : 0}%
             </strong> siswa mandiri
           </span>
         </div>

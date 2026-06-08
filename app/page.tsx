@@ -16,8 +16,7 @@ export default function LandingPage() {
       <nav className="sticky top-0 z-50 glass-panel flex items-center justify-between px-6 py-4 mx-4 mt-4 rounded-2xl">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-white dark:bg-ink-900 flex items-center justify-center shadow-md overflow-hidden relative">
-            <Image src="/logo-light.png" alt="ThinkStep Logo" fill className="object-cover dark:hidden" />
-            <Image src="/logo-dark.png" alt="ThinkStep Logo" fill className="object-cover hidden dark:block" />
+            <Image src="/logo-baru.png" alt="ThinkStep Logo" fill className="object-cover dark:invert" />
           </div>
           <span className="font-bold text-xl tracking-tight text-text-primary font-display">
             ThinkStep
@@ -155,8 +154,7 @@ export default function LandingPage() {
       <footer className="relative z-10 py-12 px-6 border-t border-border bg-surface-alt text-center">
         <div className="flex items-center justify-center gap-3 mb-4 opacity-80">
           <div className="w-8 h-8 rounded-lg bg-white dark:bg-ink-900 overflow-hidden relative shadow-sm">
-            <Image src="/logo-light.png" alt="ThinkStep Logo" fill className="object-cover dark:hidden" />
-            <Image src="/logo-dark.png" alt="ThinkStep Logo" fill className="object-cover hidden dark:block" />
+            <Image src="/logo-baru.png" alt="ThinkStep Logo" fill className="object-cover dark:invert" />
           </div>
           <span className="font-bold text-ink-500 font-display text-lg">ThinkStep</span>
         </div>

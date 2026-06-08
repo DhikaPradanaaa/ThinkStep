@@ -13,6 +13,10 @@ export default async function ParentDashboard() {
   const session = await auth()
   if (!session?.user) redirect('/login')
 
+  if ((session.user as any).onboardingCompleted === false) {
+    redirect('/onboarding')
+  }
+
   const user = session.user as any
   if (user.role !== 'PARENT') redirect('/student/dashboard')
 

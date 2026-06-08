@@ -11,6 +11,11 @@ import MiniLeaderboardWidget from '@/components/gamification/MiniLeaderboardWidg
 export default async function StudentDashboard() {
   const session = await auth()
   if (!session?.user) redirect('/login')
+  
+  if ((session.user as any).onboardingCompleted === false) {
+    redirect('/onboarding')
+  }
+
   const userId = (session.user as any).id
   const role = (session.user as any).role
   if (role !== 'STUDENT') redirect('/teacher/dashboard')

@@ -23,8 +23,13 @@ model User {
   avatarColor  String   @default("#3B82F6")
   resetToken       String?   @unique
   resetTokenExpiry DateTime?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  image            String?
+  emailVerified    DateTime?
+  onboardingCompleted Boolean @default(true)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  accounts               Account[]
 
   sessions               LearningSession[]
   badges                 UserBadge[]
@@ -490,4 +495,27 @@ enum NotificationType {
   BADGE_EARNED
   SUBMISSION_RECEIVED
   DAILY_REMINDER
+}
+
+// ─────────────────────────────────────────
+// NEXT-AUTH ACCOUNTS
+// ─────────────────────────────────────────
+
+model Account {
+  id                 String  @id @default(cuid())
+  userId             String
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?
+  access_token       String?
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?
+  session_state      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
 }

@@ -11,20 +11,7 @@ interface TopicHeatmapProps {
   data?: TopicData[]
 }
 
-const DEMO_DATA: TopicData[] = [
-  { topic: 'Persamaan Linear', subject: 'Matematika', avgHints: 2.4, sessionCount: 32 },
-  { topic: 'Sistem Persamaan', subject: 'Matematika', avgHints: 2.8, sessionCount: 18 },
-  { topic: 'Geometri Bidang', subject: 'Matematika', avgHints: 1.6, sessionCount: 24 },
-  { topic: 'Bilangan Bulat', subject: 'Matematika', avgHints: 0.9, sessionCount: 41 },
-  { topic: 'Statistika Dasar', subject: 'Matematika', avgHints: 1.8, sessionCount: 15 },
-  { topic: 'Sel & Jaringan', subject: 'IPA', avgHints: 1.2, sessionCount: 28 },
-  { topic: 'Sistem Pencernaan', subject: 'IPA', avgHints: 1.5, sessionCount: 22 },
-  { topic: 'Listrik Statis', subject: 'IPA', avgHints: 2.6, sessionCount: 19 },
-  { topic: 'Ekosistem', subject: 'IPA', avgHints: 0.8, sessionCount: 35 },
-  { topic: 'Struktur Teks', subject: 'B.Indonesia', avgHints: 1.1, sessionCount: 27 },
-  { topic: 'Kebahasaan', subject: 'B.Indonesia', avgHints: 2.2, sessionCount: 14 },
-  { topic: 'Literasi Sastra', subject: 'B.Indonesia', avgHints: 1.9, sessionCount: 20 },
-]
+const DEMO_DATA: TopicData[] = []
 
 function getHeatColor(avgHints: number): { bg: string; text: string; label: string } {
   if (avgHints >= 2.5) return { bg: '#FEE2E2', text: '#991B1B', label: 'Sulit' }
@@ -68,6 +55,8 @@ export default function TopicHeatmap({ data = DEMO_DATA }: TopicHeatmapProps) {
           const topicsBySubject = data.filter(d => d.subject === subject)
             .sort((a, b) => b.avgHints - a.avgHints)
 
+          if (topicsBySubject.length === 0) return null
+
           return (
             <div key={subject}>
               <p style={{
@@ -106,6 +95,12 @@ export default function TopicHeatmap({ data = DEMO_DATA }: TopicHeatmapProps) {
             </div>
           )
         })}
+
+        {data.length === 0 && (
+          <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--color-text-muted)' }}>
+            <p style={{ fontSize: '0.875rem' }}>Belum ada data topik tersedia.</p>
+          </div>
+        )}
       </div>
     </div>
   )

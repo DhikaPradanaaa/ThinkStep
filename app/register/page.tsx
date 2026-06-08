@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { signIn, useSession } from 'next-auth/react'
 import Link from 'next/link'
 import Image from 'next/image'
 import {
@@ -39,6 +40,22 @@ function getPasswordStrength(password: string): PasswordStrength {
 
 export default function RegisterPage() {
   const router = useRouter()
+  const { data: session, status } = useSession()
+
+  useEffect(() => {
+    if (status === 'authenticated' && session?.user) {
+      const isComplete = (session.user as any).onboardingCompleted
+      if (isComplete === false) {
+        router.push('/onboarding')
+        return
+      }
+
+      const role = (session.user as any).role
+      if (role === 'TEACHER') router.push('/teacher/dashboard')
+      else if (role === 'PARENT') router.push('/parent/dashboard')
+      else router.push('/student/dashboard')
+    }
+  }, [status, session, router])
 
   const [form, setForm] = useState({
     name: '',
@@ -149,8 +166,7 @@ export default function RegisterPage() {
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex flex-col items-center gap-3 justify-center mb-3 group hover:opacity-90 transition-opacity">
             <div className="w-14 h-14 rounded-2xl bg-white dark:bg-ink-900 shadow-md flex items-center justify-center mb-2 overflow-hidden relative">
-              <Image src="/logo-light.png" alt="ThinkStep Logo" fill className="object-cover dark:hidden" />
-              <Image src="/logo-dark.png" alt="ThinkStep Logo" fill className="object-cover hidden dark:block" />
+              <Image src="/logo-baru.png" alt="ThinkStep Logo" fill className="object-cover dark:invert" />
             </div>
             <span className="font-bold text-2xl text-text-primary tracking-tight font-display">
               ThinkStep
@@ -358,6 +374,25 @@ export default function RegisterPage() {
               )}
             </button>
           </form>
+
+          <div className="mt-6 flex flex-col gap-4">
+            <div className="flex items-center gap-3 before:h-px before:flex-1 before:bg-border after:h-px after:flex-1 after:bg-border text-xs font-medium text-text-muted uppercase tracking-wider">
+              Atau
+            </div>
+            <button
+              onClick={() => signIn('google')}
+              type="button"
+              className="btn-secondary w-full py-3 gap-2 font-semibold hover:border-ink-400 group flex items-center justify-center"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+              </svg>
+              Daftar dengan Google
+            </button>
+          </div>
 
           {/* Link ke Login */}
           <p className="text-center mt-6 text-sm text-text-muted">
