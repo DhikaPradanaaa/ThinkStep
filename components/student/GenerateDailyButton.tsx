@@ -15,7 +15,11 @@ export default function GenerateDailyButton({ gradeLevel }: Props) {
     setStatus('loading')
     setMessage('')
     try {
-      const res = await fetch('/api/cron/generate-daily-questions', { method: 'POST' })
+      const res = await fetch('/api/cron/generate-daily-questions', { 
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ gradeLevel })
+      })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Gagal generate soal')
 

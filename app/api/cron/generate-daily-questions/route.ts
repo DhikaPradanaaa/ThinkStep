@@ -29,12 +29,20 @@ async function getSystemUserId(): Promise<string | null> {
 }
 
 export async function GET(request: Request) {
+  return handleRequest(request, 'GET');
+}
+
+export async function POST(request: Request) {
+  return handleRequest(request, 'POST');
+}
+
+async function handleRequest(request: Request, method: 'GET' | 'POST') {
   const authHeader = request.headers.get('authorization');
   const cronSecret = process.env.CRON_SECRET;
 
   // Untuk cron job (GET), kita cek CRON_SECRET. 
   // Untuk trigger manual (POST) dari UI, kita biarkan lewat untuk mempermudah (ideal: cek NextAuth session).
-  if (request.method === 'GET' && process.env.NODE_ENV === 'production') {
+  if (method === 'GET' && process.env.NODE_ENV === 'production') {
     if (!cronSecret) {
       console.error('[CRON] CRON_SECRET env variable is not set. Aborting for safety.');
       return NextResponse.json({ error: 'Server misconfiguration' }, { status: 500 });
@@ -43,6 +51,18 @@ export async function GET(request: Request) {
     if (authHeader !== `Bearer ${cronSecret}`) {
       console.warn('[CRON] Unauthorized access attempt blocked.');
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+  }
+
+  let targetGradeLevel: string | null = null;
+  if (method === 'POST') {
+    try {
+      const body = await request.json();
+      if (body?.gradeLevel) {
+        targetGradeLevel = body.gradeLevel;
+      }
+    } catch (e) {
+      // Body not found or invalid JSON
     }
   }
 
@@ -60,16 +80,22 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'No users in system to attribute questions to' }, { status: 500 });
   }
 
-  // Cek grade levels yang AKTIF (ada minimal 1 siswa terdaftar)
-  const activeGrades = await prisma.user.findMany({
-    where: { role: 'STUDENT', gradeLevel: { not: null } },
-    select: { gradeLevel: true },
-    distinct: ['gradeLevel'],
-  });
+  let gradesToProcess: string[] = [];
 
-  const gradesToProcess = activeGrades.length > 0
-    ? activeGrades.map(g => g.gradeLevel!).filter(g => GRADE_LEVELS.includes(g))
-    : GRADE_LEVELS; // fallback: generate semua jika belum ada siswa
+  if (targetGradeLevel && GRADE_LEVELS.includes(targetGradeLevel)) {
+    gradesToProcess = [targetGradeLevel];
+  } else {
+    // Cek grade levels yang AKTIF (ada minimal 1 siswa terdaftar)
+    const activeGrades = await prisma.user.findMany({
+      where: { role: 'STUDENT', gradeLevel: { not: null } },
+      select: { gradeLevel: true },
+      distinct: ['gradeLevel'],
+    });
+
+    gradesToProcess = activeGrades.length > 0
+      ? activeGrades.map(g => g.gradeLevel!).filter(g => GRADE_LEVELS.includes(g))
+      : GRADE_LEVELS; // fallback: generate semua jika belum ada siswa
+  }
 
   console.log(`[CRON] Generating daily questions for ${today}. Grades: ${gradesToProcess.join(', ')}`);
 
@@ -153,7 +179,4 @@ export async function GET(request: Request) {
   return NextResponse.json(results);
 }
 
-// POST endpoint untuk trigger manual dari teacher dashboard
-export async function POST(request: Request) {
-  return GET(request);
-}
+// Helper handleRequest completes here.
