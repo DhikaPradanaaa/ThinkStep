@@ -62,8 +62,8 @@ Kami membawa ekosistem belajar yang komprehensif, tidak hanya untuk siswa, tapi 
     *   Tidak memberi jawaban instan. AI ini akan memberikan *hint* berjenjang (dari petunjuk ringan hingga sangat spesifik) sesuai dengan tingkat kesulitan siswa.
     *   Siswa bisa berdiskusi langsung, mengirim foto soal matematika/sains, dan AI akan membacanya!
 *   📶 **Teknologi Hybrid (Online & Offline Mode)**
-    *   Bisa berjalan dengan API cloud yang sangat cerdas (Google Gemini) saat ada internet.
-    *   **Kehabisan kuota? Tidak masalah!** Sistem otomatis berpindah ke AI lokal (Ollama) yang berjalan 100% tanpa internet, cocok untuk daerah 3T.
+    *   Bisa berjalan dengan API cloud yang sangat cerdas saat ada internet.
+    *   **Kehabisan kuota? Tidak masalah!** Sistem otomatis berpindah ke AI lokal yang berjalan 100% tanpa internet, cocok untuk daerah 3T.
 *   🎮 **Gamifikasi & *Autonomy Index***
     *   Setiap kali siswa berhasil menjawab dengan *hint* paling sedikit, mereka akan mendapatkan poin dan **Lencana (Badges)** yang keren!
     *   Fitur ***Autonomy Index*** mengukur seberapa mandiri seorang siswa dalam memecahkan masalah.
