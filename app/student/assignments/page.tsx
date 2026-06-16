@@ -6,41 +6,6 @@ import Link from 'next/link'
 
 export const dynamic = 'force-dynamic'
 
-const DEMO_ASSIGNMENTS = [
-  {
-    id: 'a1',
-    title: 'Esai Dampak Media Sosial terhadap Remaja',
-    instructions: 'Tuliskan esai argumentatif tentang dampak positif dan negatif media sosial pada kehidupan remaja Indonesia.',
-    deadline: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
-    maxDurationMins: 90,
-    minWordCount: 300 as number | undefined,
-    isPublished: true,
-    status: 'PENDING',
-    createdBy: { name: 'Bu Sari' },
-  },
-  {
-    id: 'a2',
-    title: 'Laporan Percobaan Sains: Hukum Archimedes',
-    instructions: 'Berdasarkan percobaan yang dilakukan di kelas, tuliskan laporan ilmiah lengkap.',
-    deadline: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-    maxDurationMins: 60,
-    minWordCount: 200,
-    isPublished: true,
-    status: 'SUBMITTED',
-    createdBy: { name: 'Pak Budi' },
-  },
-  {
-    id: 'a3',
-    title: 'Analisis Cerpen "Robohnya Surau Kami"',
-    instructions: 'Analisislah unsur intrinsik dan ekstrinsik cerpen tersebut.',
-    deadline: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-    maxDurationMins: 120,
-    minWordCount: 400,
-    isPublished: true,
-    status: 'TIMED_OUT',
-    createdBy: { name: 'Bu Rina' },
-  },
-]
 
 function getStatusInfo(status: string, deadline: string) {
   const isExpired = new Date(deadline) < new Date()
@@ -64,7 +29,7 @@ export default async function StudentAssignmentsPage() {
   const user = session.user as any
   if (user.role !== 'STUDENT') redirect('/teacher/dashboard')
 
-  let assignments = DEMO_ASSIGNMENTS
+  let assignments: any[] = []
   try {
     const userWithClasses = await prisma.user.findUnique({
       where: { id: user.id },
@@ -77,7 +42,7 @@ export default async function StudentAssignmentsPage() {
         isPublished: true, 
         OR: [
           { classId: { in: classIds } },
-          { classId: null, targetGrade: user.gradeLevel ?? 'Kelas 8' }
+          { classId: null }
         ]
       },
       include: {
@@ -183,7 +148,25 @@ export default async function StudentAssignmentsPage() {
                           {a.createdBy.name} · {new Date(a.deadline).toLocaleDateString('id-ID')}
                         </p>
                       </div>
+                      
+                      {a.writingSessions?.[0]?.teacherFinalScore !== null && a.writingSessions?.[0]?.teacherFinalScore !== undefined && (
+                        <div style={{ textAlign: 'right', background: 'var(--color-surface)', padding: '0.5rem 1rem', borderRadius: '8px', border: '1px solid var(--color-border)' }}>
+                          <div style={{ fontSize: '0.7rem', color: 'var(--color-text-secondary)', fontWeight: 600, textTransform: 'uppercase' }}>Nilai Akhir</div>
+                          <div style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--color-brand-main)' }}>
+                            {a.writingSessions[0].teacherFinalScore} <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', fontWeight: 400 }}>/ 100</span>
+                          </div>
+                        </div>
+                      )}
                     </div>
+                    
+                    {a.writingSessions?.[0]?.teacherComment && (
+                      <div style={{ marginTop: '1rem', padding: '0.75rem', background: 'var(--color-surface)', borderRadius: '6px', borderLeft: '3px solid var(--color-brand-main)' }}>
+                        <span style={{ fontSize: '0.7rem', fontWeight: 600, color: 'var(--color-brand-main)', display: 'block', marginBottom: '4px' }}>💬 Komentar Guru:</span>
+                        <p style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', lineHeight: 1.5 }}>
+                          "{a.writingSessions[0].teacherComment}"
+                        </p>
+                      </div>
+                    )}
                   </div>
                 )
               })}

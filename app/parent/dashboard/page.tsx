@@ -18,7 +18,8 @@ export default async function ParentDashboard() {
   }
 
   const user = session.user as any
-  if (user.role !== 'PARENT') redirect('/student/dashboard')
+  if (user.role === 'STUDENT') redirect('/student/dashboard')
+  if (user.role === 'TEACHER') redirect('/teacher/dashboard')
 
   // Dapatkan anak yang di-link
   const links = await prisma.parentStudentLink.findMany({

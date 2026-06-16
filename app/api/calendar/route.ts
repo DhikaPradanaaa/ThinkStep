@@ -40,7 +40,7 @@ export async function GET(request: Request) {
           deadline: { gte: startDate, lt: endDate },
           OR: [
             { classId: { in: classIds } },
-            { classId: null, targetGrade: user.gradeLevel ?? 'Kelas 8' }
+            { classId: null }
           ]
         }
       })
@@ -58,16 +58,16 @@ export async function GET(request: Request) {
       })
 
       // 2. Ujian (Exam)
-      const exams = await prisma.exam.findMany({
+      const exams = user.schoolId ? await prisma.exam.findMany({
         where: {
           schoolId: user.schoolId,
           startsAt: { gte: startDate, lt: endDate },
           OR: [
             { classId: { in: classIds } },
-            { classId: null, targetGrade: user.gradeLevel ?? 'Kelas 8' }
+            { classId: null }
           ]
         }
-      })
+      }) : []
 
       exams.forEach((e: any) => {
         if (e.startsAt) {

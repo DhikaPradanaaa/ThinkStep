@@ -40,7 +40,7 @@ const teacherNav: NavItem[] = [
   { href: '/teacher/students', label: 'Siswa', icon: Users },
   { href: '/teacher/question-bank', label: 'Bank Soal', icon: Library },
   { href: '/teacher/assignments', label: 'Tugas', icon: FileText },
-  { href: '/teacher/exam', label: 'Ujian', icon: ClipboardList },
+  { href: '/teacher/exam/new', label: 'Ujian', icon: ClipboardList },
 ]
 
 const parentNav: NavItem[] = [

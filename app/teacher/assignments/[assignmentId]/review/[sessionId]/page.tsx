@@ -23,8 +23,10 @@ export default async function ReviewPage({ params }: ReviewPageProps) {
   let assignmentTitle = 'Tugas'
   let studentName = 'Siswa'
 
+  let writingSession: any = null
+
   try {
-    const writingSession = await prisma.writingSession.findUnique({
+    writingSession = await prisma.writingSession.findUnique({
       where: { id: sessionId },
       include: {
         assignment: true,
@@ -60,7 +62,7 @@ export default async function ReviewPage({ params }: ReviewPageProps) {
           </div>
         </div>
 
-        <ReviewPageClient sessionId={sessionId} />
+        <ReviewPageClient sessionId={sessionId} initialSession={writingSession} />
 
       </div>
     </AppLayout>

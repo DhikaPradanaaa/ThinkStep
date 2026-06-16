@@ -4,7 +4,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
 }
 
 // ─────────────────────────────────────────
@@ -42,6 +42,15 @@ model User {
   taughtClasses          Class[]              @relation("TeacherClasses")
   joinedClasses          Class[]              @relation("StudentClasses")
   
+  teacherCourses         Course[]             @relation("TeacherCourses")
+  studentEnrollments     CourseEnrollment[]   @relation("StudentEnrollments")
+  teacherLiveClasses     LiveClass[]          @relation("TeacherLiveClasses")
+  liveClassAttendances   LiveClassAttendance[]
+  userThreads            ForumThread[]        @relation("UserThreads")
+  userReplies            ForumReply[]         @relation("UserReplies")
+  certificates           Certificate[]
+  dailyAttendances       DailyAttendance[]
+
   linkedChildren         ParentStudentLink[]  @relation("ParentLinks")
   linkedParents          ParentStudentLink[]  @relation("StudentLinks")
   notifications          Notification[]
@@ -67,6 +76,7 @@ model Class {
   students    User[]   @relation("StudentClasses")
   exams       Exam[]
   assignments Assignment[]
+  liveClasses LiveClass[]
   
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -125,6 +135,7 @@ model School {
   exams     Exam[]
   assignments Assignment[]
   classes   Class[]
+  courses   Course[]
   createdAt DateTime @default(now())
 }
 
@@ -262,6 +273,9 @@ model UserStats {
   currentStreak      Int      @default(0)
   longestStreak      Int      @default(0)
   autonomyIndex      Float    @default(0)
+  aiCluster          String?
+  predictedScore     Float?
+  recommendedDiff    String?  @default("MEDIUM")
   lastActiveDate     DateTime?
   updatedAt          DateTime @updatedAt
 }
@@ -324,8 +338,9 @@ model Assignment {
   id              String          @id @default(cuid())
   title           String
   instructions    String
+  assignmentType  AssignmentType  @default(ESSAY)
   attachmentUrls  String          @default("[]")
-  targetGrade     String
+  targetGrade     String?
   schoolId        String
   school          School          @relation(fields: [schoolId], references: [id])
   createdById     String
@@ -346,6 +361,11 @@ model Assignment {
   @@index([deadline])
 }
 
+enum AssignmentType {
+  ESSAY
+  GENERAL
+}
+
 // ─────────────────────────────────────────
 // WRITING SESSION (Backend v2)
 // ─────────────────────────────────────────
@@ -360,8 +380,16 @@ model WritingSession {
   startedAt     DateTime             @default(now())
   submittedAt   DateTime?
   autoSubmitted Boolean              @default(false)
-  finalContent  String?
-  wordCount     Int?
+  finalContent      String?
+  submissionContent String?
+  submissionFileUrls String  @default("[]")
+  wordCount         Int?
+  aiRecommendedScore Float?
+  aiScoreReasoning   String?
+  teacherFinalScore  Float?
+  teacherComment     String?
+  gradedAt           DateTime?
+  reminderSentStatus Int       @default(0) // 0: none, 1: H-3 sent, 2: H-1 sent
   events        WritingEvent[]
   analysisReport WritingAnalysisReport?
   pasteAttempts PasteAttempt[]
@@ -518,4 +546,150 @@ model Account {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
+}
+
+// ─────────────────────────────────────────
+// COURSE MANAGEMENT
+// ─────────────────────────────────────────
+model Course {
+  id              String           @id @default(cuid())
+  title           String
+  description     String?
+  gradeLevel      String
+  subject         String
+  schoolId        String?
+  school          School?          @relation(fields: [schoolId], references: [id])
+  createdById     String
+  createdBy       User             @relation("TeacherCourses", fields: [createdById], references: [id])
+  isPublished     Boolean          @default(false)
+  modules         CourseModule[]
+  enrollments     CourseEnrollment[]
+  forumThreads    ForumThread[]
+  certificates    Certificate[]
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+}
+
+model CourseModule {
+  id              String           @id @default(cuid())
+  courseId        String
+  course          Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  title           String
+  order           Int
+  materials       CourseMaterial[]
+  createdAt       DateTime         @default(now())
+}
+
+model CourseMaterial {
+  id              String           @id @default(cuid())
+  moduleId        String
+  module          CourseModule     @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  title           String
+  type            MaterialType
+  contentUrl      String?
+  textContent     String?
+  order           Int
+  createdAt       DateTime         @default(now())
+}
+
+enum MaterialType {
+  VIDEO
+  PDF
+  TEXT
+}
+
+model CourseEnrollment {
+  id              String           @id @default(cuid())
+  courseId        String
+  course          Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  userId          String
+  user            User             @relation("StudentEnrollments", fields: [userId], references: [id], onDelete: Cascade)
+  progressPct     Float            @default(0)
+  completed       Boolean          @default(false)
+  enrolledAt      DateTime         @default(now())
+
+  @@unique([courseId, userId])
+}
+
+// ─────────────────────────────────────────
+// LIVE CLASS
+// ─────────────────────────────────────────
+model LiveClass {
+  id              String           @id @default(cuid())
+  title           String
+  description     String?
+  scheduledAt     DateTime
+  zoomUrl         String?
+  classId         String?
+  schoolClass     Class?           @relation(fields: [classId], references: [id])
+  teacherId       String
+  teacher         User             @relation("TeacherLiveClasses", fields: [teacherId], references: [id])
+  attendances     LiveClassAttendance[]
+  createdAt       DateTime         @default(now())
+}
+
+model LiveClassAttendance {
+  id              String           @id @default(cuid())
+  liveClassId     String
+  liveClass       LiveClass        @relation(fields: [liveClassId], references: [id], onDelete: Cascade)
+  userId          String
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  joinedAt        DateTime         @default(now())
+  durationMins    Int?
+
+  @@unique([liveClassId, userId])
+}
+
+// ─────────────────────────────────────────
+// DISCUSSION FORUM
+// ─────────────────────────────────────────
+model ForumThread {
+  id              String           @id @default(cuid())
+  title           String
+  content         String
+  courseId        String?
+  course          Course?          @relation(fields: [courseId], references: [id])
+  authorId        String
+  author          User             @relation("UserThreads", fields: [authorId], references: [id])
+  replies         ForumReply[]
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+}
+
+model ForumReply {
+  id              String           @id @default(cuid())
+  threadId        String
+  thread          ForumThread      @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  content         String
+  authorId        String
+  author          User             @relation("UserReplies", fields: [authorId], references: [id])
+  upvotes         Int              @default(0)
+  isBestAnswer    Boolean          @default(false)
+  createdAt       DateTime         @default(now())
+}
+
+// ─────────────────────────────────────────
+// CERTIFICATE & ATTENDANCE
+// ─────────────────────────────────────────
+model Certificate {
+  id              String           @id @default(cuid())
+  userId          String
+  user            User             @relation(fields: [userId], references: [id])
+  courseId        String?
+  course          Course?          @relation(fields: [courseId], references: [id])
+  title           String
+  qrCodeUrl       String?
+  issuedAt        DateTime         @default(now())
+}
+
+model DailyAttendance {
+  id              String           @id @default(cuid())
+  userId          String
+  user            User             @relation(fields: [userId], references: [id])
+  date            String
+  status          String
+  loginCount      Int              @default(1)
+  totalDurationMs BigInt           @default(0)
+
+  @@unique([userId, date])
 }

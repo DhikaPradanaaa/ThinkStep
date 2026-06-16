@@ -19,39 +19,27 @@ export async function GET(request: Request) {
   }
 
   try {
-    // 1. Get all parents
+    // 1. Get all parents with their linked children
     const parents = await prisma.user.findMany({
       where: { role: 'PARENT' },
-      select: { id: true, email: true, name: true }
-    })
-
-    // 2. Since we don't have explicit parent-child relations, we'll mock it for now.
-    // In a real scenario, you would fetch `parent.children`.
-    const student = await prisma.user.findFirst({
-      where: { role: 'STUDENT' },
-      include: {
-        userStats: true,
-        sessions: {
-          where: { startedAt: { gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) } },
-          select: { startedAt: true, endedAt: true },
+      select: { 
+        id: true, 
+        email: true, 
+        name: true,
+        linkedChildren: {
+          include: {
+            student: {
+              include: {
+                userStats: true,
+                sessions: {
+                  where: { startedAt: { gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) } },
+                  select: { startedAt: true, endedAt: true },
+                }
+              }
+            }
+          }
         }
       }
-    })
-
-    if (!student || !student.userStats) {
-      return NextResponse.json({ ok: true, message: 'No student data to report' })
-    }
-
-    const htmlReport = generateWeeklyReportHTML(student.name, {
-      points: student.userStats.totalPoints,
-      // BUG-001 FIX: Use totalCorrect (existing field) instead of non-existent questionsSolved
-      questionsSolved: student.userStats.totalCorrect,
-      autonomyIndex: student.userStats.autonomyIndex,
-      // BUG-001 FIX: Estimate hours from sessions count (totalStudyTimeMs doesn't exist in schema)
-      hoursSpent: student.sessions.reduce((total: number, s: { startedAt: Date; endedAt: Date | null }) => {
-        if (s.endedAt) return total + (s.endedAt.getTime() - s.startedAt.getTime()) / 3600000;
-        return total + 0.25; // assume ~15min per session without endedAt
-      }, 0)
     })
 
     // Setup Nodemailer
@@ -63,11 +51,35 @@ export async function GET(request: Request) {
       },
     })
 
-    // 3. Send email to each parent
     const sentEmails = []
+
+    // 2. Loop through each parent and generate reports for their children
     for (const parent of parents) {
+      if (!parent.linkedChildren || parent.linkedChildren.length === 0) continue;
+
+      let combinedHtmlReport = '';
+      
+      for (const link of parent.linkedChildren) {
+        const student = link.student;
+        if (!student || !student.userStats) continue;
+
+        const htmlReport = generateWeeklyReportHTML(student.name, {
+          points: student.userStats.totalPoints,
+          questionsSolved: student.userStats.totalCorrect,
+          autonomyIndex: student.userStats.autonomyIndex,
+          hoursSpent: student.sessions.reduce((total: number, s: { startedAt: Date; endedAt: Date | null }) => {
+            if (s.endedAt) return total + (s.endedAt.getTime() - s.startedAt.getTime()) / 3600000;
+            return total + 0.25; 
+          }, 0)
+        });
+
+        combinedHtmlReport += htmlReport + '<br><hr><br>';
+      }
+
+      if (!combinedHtmlReport) continue;
+
       if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-        console.log(`[MOCK EMAIL] To: ${parent.email}\n${htmlReport}`)
+        console.log(`[MOCK EMAIL] To: ${parent.email}\n${combinedHtmlReport}`)
         continue
       }
       
@@ -76,7 +88,7 @@ export async function GET(request: Request) {
           from: `"ThinkStep AI" <${process.env.EMAIL_USER}>`,
           to: parent.email,
           subject: '📊 Laporan Progres Belajar Mingguan ThinkStep',
-          html: htmlReport,
+          html: combinedHtmlReport,
         })
         sentEmails.push(parent.email)
         console.log(`[CRON] Email terkirim ke ${parent.email}`)
@@ -87,7 +99,7 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ 
       ok: true, 
-      sentTo: parents.length, 
+      sentTo: sentEmails.length, 
       actualEmailsSent: sentEmails,
       message: (!process.env.EMAIL_USER) ? "Set EMAIL_USER dan EMAIL_PASS di .env untuk mengirim email beneran." : "Sukses"
     })

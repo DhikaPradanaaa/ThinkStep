@@ -46,7 +46,7 @@ export async function POST(req: Request) {
     const activeExam = await prisma.exam.findFirst({
       where: {
         schoolId: user.schoolId || 'no-school',
-        targetGrade: user.gradeLevel,
+        targetGrade: user.gradeLevel || 'no-grade',
         isActive: true,
         OR: [
           { endsAt: null },

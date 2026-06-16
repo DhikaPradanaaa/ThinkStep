@@ -12,9 +12,9 @@ export async function POST(req: NextRequest) {
   if (user.role !== 'TEACHER') return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
   const body = await req.json()
-  const { title, instructions, targetGrade, minWordCount, maxDurationMins, deadlineDays, classId } = body
+  const { title, instructions, minWordCount, maxDurationMins, deadlineDays, classId, assignmentType, attachmentUrls } = body
 
-  if (!title || !instructions || !targetGrade) {
+  if (!title || !instructions) {
     return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
   }
 
@@ -26,16 +26,44 @@ export async function POST(req: NextRequest) {
       data: {
         title,
         instructions,
-        targetGrade,
+        targetGrade: classId ? 'Khusus' : 'Global',
         minWordCount: minWordCount ? parseInt(minWordCount) : null,
         maxDurationMins: parseInt(maxDurationMins) || 60,
         deadline,
         isPublished: true,
+        assignmentType: assignmentType || 'ESSAY',
+        attachmentUrls: attachmentUrls ? JSON.stringify(attachmentUrls) : '[]',
         schoolId: user.schoolId || 'no-school',
         classId: classId || null,
         createdById: user.id,
       },
     })
+
+    // Temukan siswa yang akan mendapatkan tugas ini
+    const students = await prisma.user.findMany({
+      where: {
+        role: 'STUDENT',
+        ...(classId 
+          ? { joinedClasses: { some: { id: classId } } }
+          : { schoolId: user.schoolId || 'no-school' }
+        )
+      },
+      select: { id: true }
+    })
+
+    if (students.length > 0) {
+      // Create Tasks for each student
+      await prisma.task.createMany({
+        data: students.map(s => ({
+          userId: s.id,
+          title: `Tugas: ${title}`,
+          description: `Tenggat Waktu: ${deadline.toLocaleDateString('id-ID')}`,
+          deadline: deadline,
+          priority: 'HIGH',
+          status: 'TODO'
+        }))
+      })
+    }
 
     if (classId) {
       await createNotificationForClass({
