@@ -7,6 +7,7 @@ import { BADGES } from '@/lib/gamification/badges'
 import { getAutonomyLabel } from '@/lib/gamification/scoring'
 import JoinClassButton from '@/components/student/JoinClassButton'
 import MiniLeaderboardWidget from '@/components/gamification/MiniLeaderboardWidget'
+import AiSyncButton from '@/components/student/AiSyncButton'
 
 export default async function StudentDashboard() {
   const session = await auth()
@@ -18,7 +19,8 @@ export default async function StudentDashboard() {
 
   const userId = (session.user as any).id
   const role = (session.user as any).role
-  if (role !== 'STUDENT') redirect('/teacher/dashboard')
+  if (role === 'TEACHER') redirect('/teacher/dashboard')
+  if (role === 'PARENT') redirect('/parent/dashboard')
 
   const schoolId = (session.user as any).schoolId as string | null
   const gradeLevel = (session.user as any).gradeLevel as string | null
@@ -29,7 +31,7 @@ export default async function StudentDashboard() {
   })
   const classIds = userWithClasses?.joinedClasses.map(c => c.id) || []
 
-  const [stats, badges, recentSessions, assignments, activeExam, pendingTasks] = await Promise.all([
+  const [stats, badges, recentSessions, assignments, activeExam, pendingTasks, recommendedCourses, upcomingClasses] = await Promise.all([
     prisma.userStats.findUnique({ where: { userId } }),
     prisma.userBadge.findMany({ where: { userId }, orderBy: { earnedAt: 'desc' }, take: 5 }),
     prisma.learningSession.findMany({
@@ -43,7 +45,7 @@ export default async function StudentDashboard() {
         isPublished: true, 
         OR: [
           { classId: { in: classIds } },
-          { classId: null, targetGrade: gradeLevel ?? 'Kelas 8' }
+          { classId: null }
         ]
       },
       orderBy: { deadline: 'asc' },
@@ -57,9 +59,9 @@ export default async function StudentDashboard() {
             isActive: true,
             OR: [
               { classId: { in: classIds } },
-              { classId: null, targetGrade: gradeLevel ?? 'Kelas 8' }
+              { classId: null }
             ],
-            AND: [
+            OR: [
               { endsAt: null },
               { endsAt: { gt: new Date() } },
             ],
@@ -73,6 +75,15 @@ export default async function StudentDashboard() {
       orderBy: [{ priority: 'desc' }, { deadline: 'asc' }, { createdAt: 'desc' }],
       take: 4,
     }),
+    prisma.course.findMany({
+      where: { isPublished: true },
+      take: 3,
+    }),
+    prisma.liveClass.findMany({
+      where: { scheduledAt: { gte: new Date() } },
+      orderBy: { scheduledAt: 'asc' },
+      take: 2,
+    })
   ])
 
   // Soal Harian: hitung progress hari ini
@@ -128,10 +139,22 @@ export default async function StudentDashboard() {
               {new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
             </p>
           </div>
-          <div>
+          <div className="flex gap-3">
+            <AiSyncButton studentId={userId} />
             <JoinClassButton />
           </div>
         </div>
+
+        {/* AI Warning Banner */}
+        {stats && stats.predictedScore !== null && stats.predictedScore < 60 && (
+          <div className="rounded-xl border border-warning-main bg-warning-light p-4 shadow-sm slide-up flex items-start gap-3">
+            <span className="text-2xl">⚠️</span>
+            <div>
+              <p className="font-bold text-warning-dark">Perhatian Ekstra Diperlukan</p>
+              <p className="text-sm text-warning-dark/80">AI mendeteksi kemungkinan Anda tertinggal berdasarkan skor dan aktivitas terbaru Anda (Prediksi Skor: {stats.predictedScore}). Silakan hubungi guru Anda untuk mendapatkan bantuan.</p>
+            </div>
+          </div>
+        )}
 
         {/* Stats Grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 slide-up">
@@ -282,6 +305,57 @@ export default async function StudentDashboard() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 slide-up" style={{ animationDelay: '250ms' }}>
+          {/* Recommended Courses (AI) */}
+          {recommendedCourses.length > 0 && (
+            <div className="glass-card p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-heading-sm">Rekomendasi AI Untukmu 🧠</h2>
+                <Link href="/student/courses" className="text-sm font-semibold text-ink-600 hover:text-ink-700">Lihat semua &rarr;</Link>
+              </div>
+              <div className="flex flex-col gap-3">
+                {recommendedCourses.map((course) => (
+                  <Link key={course.id} href={`/student/courses/${course.id}`} className="block outline-none">
+                    <div className="flex items-center justify-between p-3 bg-surface/60 rounded-xl border border-white/40 shadow-sm hover:bg-surface/80 transition-colors">
+                      <div>
+                        <p className="text-sm font-semibold text-text-primary">{course.title}</p>
+                        <p className="text-xs text-text-muted">{course.subject}</p>
+                      </div>
+                      <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">Level: {stats?.recommendedDiff || 'MEDIUM'}</span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Upcoming Live Classes */}
+          {upcomingClasses.length > 0 && (
+            <div className="glass-card p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-heading-sm">Kelas Live Mendatang 📹</h2>
+              </div>
+              <div className="flex flex-col gap-3">
+                {upcomingClasses.map((live) => (
+                  <div key={live.id} className="flex items-center justify-between p-3 bg-surface/60 rounded-xl border border-white/40 shadow-sm">
+                    <div>
+                      <p className="text-sm font-semibold text-text-primary">{live.title}</p>
+                      <p className="text-xs text-text-muted">{new Date(live.scheduledAt).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })}</p>
+                    </div>
+                    {live.zoomUrl ? (
+                      <a href={live.zoomUrl} target="_blank" rel="noreferrer" className="text-xs font-semibold px-3 py-1.5 rounded-full bg-indigo-600 text-white hover:bg-indigo-700">
+                        Join Zoom
+                      </a>
+                    ) : (
+                      <span className="text-xs text-text-muted">Link belum tersedia</span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 slide-up" style={{ animationDelay: '300ms' }}>
           {classIds.length > 0 && (
             <MiniLeaderboardWidget classId={classIds[0]} currentUserId={userId} />
           )}

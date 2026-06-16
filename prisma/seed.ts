@@ -1,13 +1,10 @@
-import { PrismaClient } from '@prisma/client'
-import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3'
 import bcrypt from 'bcryptjs'
-import path from 'path'
+import dotenv from 'dotenv'
 
-const dbPath = path.join(process.cwd(), 'prisma', 'dev.db')
-const adapter = new PrismaBetterSqlite3({ url: `file:${dbPath}` })
-const prisma = new PrismaClient({ adapter })
+dotenv.config({ path: '.env.local' })
 
 async function main() {
+  const { prisma } = await import('../lib/db')
   console.log('🌱 Seeding ThinkStep database...')
 
   // ─── Buat School ───────────────────────────────

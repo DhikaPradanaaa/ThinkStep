@@ -20,7 +20,8 @@ export default async function TeacherDashboardPage() {
   }
 
   const user = session.user as any
-  if (user.role !== 'TEACHER') redirect('/student/dashboard')
+  if (user.role === 'STUDENT') redirect('/student/dashboard')
+  if (user.role === 'PARENT') redirect('/parent/dashboard')
 
   // Fetch real data with fallback
   let students: any[] = []
@@ -72,7 +73,9 @@ export default async function TeacherDashboardPage() {
         noHintPercent: noHintPct,
         autonomyIndex: autonomy,
         lastActive: studentSessions[0]?.startedAt ? 'Aktif baru-baru ini' : 'Belum aktif',
-        needsHelp: autonomy < 35,
+        needsHelp: autonomy < 35 || (s.userStats?.predictedScore !== null && s.userStats!.predictedScore < 60),
+        aiCluster: s.userStats?.aiCluster ?? '-',
+        predictedScore: s.userStats?.predictedScore ?? null,
       }
     })
   } catch (error) {
@@ -125,9 +128,35 @@ export default async function TeacherDashboardPage() {
         </div>
 
         {/* Charts Row */}
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-6 mb-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
           <HintDistributionChart />
-          <TopicHeatmap />
+          
+          {/* AI Early Warning Panel */}
+          <div className="card p-6 flex flex-col">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-heading-sm">Siswa Berisiko (AI XGBoost) ⚠️</h2>
+            </div>
+            {students.filter(s => s.predictedScore !== null && s.predictedScore < 60).length === 0 ? (
+              <div className="flex-1 flex items-center justify-center bg-surface/50 rounded-xl border border-dashed border-ink-200">
+                <p className="text-sm text-text-muted">Tidak ada siswa berisiko terdeteksi.</p>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-3">
+                {students.filter(s => s.predictedScore !== null && s.predictedScore < 60).map(s => (
+                  <div key={s.id} className="flex justify-between items-center p-3 rounded-lg bg-red-50 border border-red-100">
+                    <div>
+                      <p className="text-sm font-bold text-red-900">{s.name}</p>
+                      <p className="text-xs text-red-700">Cluster: {s.aiCluster}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs font-semibold text-red-800">Prediksi Skor</p>
+                      <p className="text-lg font-bold text-red-600">{s.predictedScore}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Quick Actions */}

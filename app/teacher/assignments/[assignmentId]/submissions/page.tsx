@@ -72,8 +72,12 @@ export default async function SubmissionsPage({ params }: SubmissionsPageProps) 
               <tr style={{ background: 'var(--color-surface-alt)', borderBottom: '1px solid var(--color-border)' }}>
                 <th style={{ padding: '1rem 1.5rem', fontWeight: 600, color: 'var(--color-text-secondary)', fontSize: '0.75rem', textTransform: 'uppercase' }}>Nama Siswa</th>
                 <th style={{ padding: '1rem 1.5rem', fontWeight: 600, color: 'var(--color-text-secondary)', fontSize: '0.75rem', textTransform: 'uppercase' }}>Status</th>
-                <th style={{ padding: '1rem 1.5rem', fontWeight: 600, color: 'var(--color-text-secondary)', fontSize: '0.75rem', textTransform: 'uppercase' }}>Kata</th>
-                <th style={{ padding: '1rem 1.5rem', fontWeight: 600, color: 'var(--color-text-secondary)', fontSize: '0.75rem', textTransform: 'uppercase' }}>Keaslian (AI)</th>
+                <th style={{ padding: '1rem 1.5rem', fontWeight: 600, color: 'var(--color-text-secondary)', fontSize: '0.75rem', textTransform: 'uppercase' }}>
+                  {assignment?.assignmentType === 'GENERAL' ? 'Lampiran' : 'Kata'}
+                </th>
+                <th style={{ padding: '1rem 1.5rem', fontWeight: 600, color: 'var(--color-text-secondary)', fontSize: '0.75rem', textTransform: 'uppercase' }}>
+                  {assignment?.assignmentType === 'GENERAL' ? 'Nilai (AI/Guru)' : 'Keaslian (AI)'}
+                </th>
                 <th style={{ padding: '1rem 1.5rem', fontWeight: 600, color: 'var(--color-text-secondary)', fontSize: '0.75rem', textTransform: 'uppercase', textAlign: 'right' }}>Aksi</th>
               </tr>
             </thead>
@@ -95,10 +99,27 @@ export default async function SubmissionsPage({ params }: SubmissionsPageProps) 
                     {sub.submittedAt && <div style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)' }}>{new Date(sub.submittedAt).toLocaleDateString('id-ID')}</div>}
                   </td>
                   <td style={{ padding: '1rem 1.5rem', fontSize: '0.875rem', color: 'var(--color-text-primary)' }}>
-                    {sub.wordCount || 0}
+                    {assignment.assignmentType === 'GENERAL' ? (
+                      sub.submissionFileUrls && JSON.parse(sub.submissionFileUrls).length > 0 
+                        ? `📎 ${JSON.parse(sub.submissionFileUrls).length} file` 
+                        : (sub.submissionContent ? '📝 Teks' : '—')
+                    ) : (
+                      sub.wordCount || 0
+                    )}
                   </td>
                   <td style={{ padding: '1rem 1.5rem' }}>
-                    {getVerdictBadge(sub.analysisReport?.overallVerdict, sub.analysisReport?.confidenceScore)}
+                    {assignment.assignmentType === 'GENERAL' ? (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                        <span style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)' }}>
+                          AI: {sub.aiRecommendedScore !== null ? <strong style={{ color: 'var(--color-brand-main)' }}>{sub.aiRecommendedScore}</strong> : '⏳'}
+                        </span>
+                        <span style={{ fontSize: '0.75rem', color: 'var(--color-text-primary)', fontWeight: 600 }}>
+                          Guru: {sub.teacherFinalScore !== null ? <span style={{ color: 'var(--color-success-dark)' }}>{sub.teacherFinalScore}</span> : '—'}
+                        </span>
+                      </div>
+                    ) : (
+                      getVerdictBadge(sub.analysisReport?.overallVerdict, sub.analysisReport?.confidenceScore)
+                    )}
                   </td>
                   <td style={{ padding: '1rem 1.5rem', textAlign: 'right' }}>
                     <Link href={`/teacher/assignments/${assignmentId}/review/${sub.id}`}>

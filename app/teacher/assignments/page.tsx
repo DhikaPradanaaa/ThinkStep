@@ -73,7 +73,7 @@ export default async function TeacherAssignmentsPage() {
                   
                   <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
                     <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>
-                      📝 Kelas {a.targetGrade}
+                      📝 {a.assignmentType === 'GENERAL' ? 'Tugas Umum' : 'Esai'}
                     </span>
                     <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>
                       ⏱️ {a.maxDurationMins} Menit

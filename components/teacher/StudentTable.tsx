@@ -35,18 +35,8 @@ function getAvatarColor(name: string): string {
   return colors[Math.abs(hash) % colors.length]
 }
 
-const DEMO_STUDENTS: Student[] = [
-  { id: 's1', name: 'Andi Kusuma', gradeLevel: 'Kelas 8A', totalSessions: 24, avgHintsUsed: 0.8, noHintPercent: 75, autonomyIndex: 85, lastActive: '2 jam lalu', needsHelp: false },
-  { id: 's2', name: 'Budi Santoso', gradeLevel: 'Kelas 8A', totalSessions: 18, avgHintsUsed: 2.1, noHintPercent: 42, autonomyIndex: 55, lastActive: '1 hari lalu', needsHelp: false },
-  { id: 's3', name: 'Citra Dewi', gradeLevel: 'Kelas 8B', totalSessions: 31, avgHintsUsed: 1.3, noHintPercent: 68, autonomyIndex: 73, lastActive: '3 jam lalu', needsHelp: false },
-  { id: 's4', name: 'Dian Pertiwi', gradeLevel: 'Kelas 8B', totalSessions: 9, avgHintsUsed: 2.8, noHintPercent: 22, autonomyIndex: 28, lastActive: '4 hari lalu', needsHelp: true },
-  { id: 's5', name: 'Eka Rahman', gradeLevel: 'Kelas 8A', totalSessions: 27, avgHintsUsed: 1.1, noHintPercent: 71, autonomyIndex: 79, lastActive: '5 jam lalu', needsHelp: false },
-  { id: 's6', name: 'Fajar Nugroho', gradeLevel: 'Kelas 8C', totalSessions: 5, avgHintsUsed: 3.0, noHintPercent: 10, autonomyIndex: 15, lastActive: '1 minggu lalu', needsHelp: true },
-  { id: 's7', name: 'Gita Sari', gradeLevel: 'Kelas 8C', totalSessions: 22, avgHintsUsed: 1.7, noHintPercent: 59, autonomyIndex: 62, lastActive: '6 jam lalu', needsHelp: false },
-  { id: 's8', name: 'Hendra Wijaya', gradeLevel: 'Kelas 8B', totalSessions: 15, avgHintsUsed: 0.5, noHintPercent: 87, autonomyIndex: 91, lastActive: '1 jam lalu', needsHelp: false },
-]
 
-export default function StudentTable({ students = DEMO_STUDENTS }: Partial<StudentTableProps>) {
+export default function StudentTable({ students = [] }: Partial<StudentTableProps>) {
   const [sortKey, setSortKey] = useState<SortKey>('autonomyIndex')
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc')
   const [search, setSearch] = useState('')

@@ -2,6 +2,7 @@ import { auth } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/db'
 import WritingPageClient from './WritingPageClient'
+import GeneralSubmissionForm from '@/components/assignment/GeneralSubmissionForm'
 
 export const dynamic = 'force-dynamic'
 
@@ -9,16 +10,6 @@ interface WritePageProps {
   params: Promise<{ assignmentId: string }>
 }
 
-// Demo assignment data for when DB fails
-const DEMO_ASSIGNMENT = {
-  id: 'demo',
-  title: 'Esai Dampak Media Sosial',
-  instructions: 'Tuliskan esai argumentatif tentang dampak media sosial pada remaja Indonesia. Gunakan argumen yang kuat dan sertakan contoh nyata.',
-  minWordCount: 300 as number | undefined,
-  maxDurationMins: 90,
-  deadline: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
-  allowAttachment: false,
-}
 
 export default async function WritePage({ params }: WritePageProps) {
   const { assignmentId } = await params
@@ -72,10 +63,21 @@ export default async function WritePage({ params }: WritePageProps) {
     id: dbAssignment.id,
     title: dbAssignment.title,
     instructions: dbAssignment.instructions,
+    assignmentType: dbAssignment.assignmentType,
+    attachmentUrls: dbAssignment.attachmentUrls,
     minWordCount: dbAssignment.minWordCount ?? undefined,
     maxDurationMins: dbAssignment.maxDurationMins,
     deadline: dbAssignment.deadline.toISOString(),
     allowAttachment: dbAssignment.allowAttachment,
+  }
+
+  if (assignmentData.assignmentType === 'GENERAL') {
+    return (
+      <GeneralSubmissionForm 
+        assignment={assignmentData} 
+        writingSessionId={writingSessionId} 
+      />
+    )
   }
 
   return (

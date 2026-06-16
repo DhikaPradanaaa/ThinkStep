@@ -32,6 +32,7 @@ export default function WritingEditor({ writingSessionId, assignment, onSubmit }
   const prevTimestampRef = useRef(Date.now())
   const prevLengthRef = useRef(0)
   const snapshotCountRef = useRef(0)
+  const contentRef = useRef('') // Tracks latest content to avoid stale closure in timer
 
   const [content, setContent] = useState('')
   const [wordCount, setWordCount] = useState(0)
@@ -123,11 +124,12 @@ export default function WritingEditor({ writingSessionId, assignment, onSubmit }
     prevLengthRef.current = newLen
 
     if (newLen > oldLen) {
-      const inserted = newContent.slice(oldLen - newLen) || newContent[newContent.length - 1] || ''
+      const inserted = newContent.slice(oldLen) || newContent[newContent.length - 1] || ''
       recordEvent('INSERT', inserted)
     }
 
     setContent(newContent)
+    contentRef.current = newContent
     setWordCount(countWords(newContent))
   }
 
@@ -142,7 +144,7 @@ export default function WritingEditor({ writingSessionId, assignment, onSubmit }
   async function handleAutoSubmit() {
     if (isSubmitted) return
     await batcherRef.current?.flushAndWait()
-    onSubmit(content)
+    onSubmit(contentRef.current) // Use ref to avoid stale closure
     setIsSubmitted(true)
   }
 
